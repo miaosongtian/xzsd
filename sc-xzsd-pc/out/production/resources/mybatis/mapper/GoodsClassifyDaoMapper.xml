@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.pc.goodsClassify.dao.GoodsClassifyDao">
+    <!--统计商品书号数量-->
+    <!--<select id="countBookNum" parameterType="com.xzsd.pc..goodsClassify.entity.GoodsClassifyInfo" resultType="int">-->
+        <!--select count(book_number)-->
+        <!--from t_goods_command-->
+        <!--where is_deleted = 0-->
+        <!--and book_number = #{bookNum}-->
+        <!--<if test="goodsId != null and goodsId != ''">-->
+            <!--and goods_code != #{goodsId}-->
+        <!--</if>-->
+    <!--</select>-->
+    <!--新增商品-->
+    <insert id="addGoodsClassify" parameterType="com.xzsd.pc.goodsClassify.entity.GoodsClassifyInfo">
+        insert into t_info_goods_classify
+        (
+        classify_id,
+        classify_name,
+        classify_parent,
+        classify_comment,
+        is_deleted,
+        create_time,
+        create_user,
+        update_time,
+        update_user,
+        version)
+        values
+        (#{classifyId},
+        #{classifyName},
+        #{classifyParent},
+        #{classifyComment},
+        #{isDeleted},
+        now(),
+        #{createBy},
+        now(),
+        #{lastModifiedBy},
+        0)
+    </insert>
+
+    <!--删除商品分类-->
+    <update id="deleteGoodsClassify" parameterType="java.lang.String">
+        update t_info_goods_classify
+        set
+        is_deleted = 1,
+        update_time = now(),
+        update_user   = #{userId},
+        version = version + 1
+        where classify_id = #{classifyId}
+    </update>
+
+    <!--修改商品分类-->
+    <update id="updateGoodsClassify" parameterType="com.xzsd.pc.goodsClassify.entity.GoodsClassifyInfo">
+        update t_info_goods_classify
+        set
+        classify_name                 = #{classifyName},
+        classify_comment              = #{classifyComment},
+        update_time                   = now(),
+        update_user                   = #{lastModifiedBy},
+        version                       = version + 1
+        where classify_id = #{classifyId}
+        and version = #{version}
+    </update>
+
+    <!--查询商品分类详情-->
+    <select id="getGoodsClassify" parameterType="java.lang.String" resultType="com.xzsd.pc.goodsClassify.entity.GoodsClassifyInfo">
+        select
+            classify_name classifyName,
+            classify_comment classifyComment
+        from t_info_goods_classify
+        where classify_id = #{classifyId}
+        and is_deleted = 0
+    </select>
+
+    <!--查询商品分类列表映射-->
+    <resultMap id="oneClassifyList" type="com.xzsd.pc.goodsClassify.entity.GoodsClassifyInfo">
+        <id column="classify_id" property="classifyId" jdbcType="VARCHAR"/>
+        <result column="classify_name" property="classifyName" jdbcType="VARCHAR"/>
+        <result column="classify_parent" property="classifyParent" jdbcType="VARCHAR"/>
+        <result column="classify_comment" property="classifyComment" jdbcType="VARCHAR"/>
+        <result column="version" property="version" jdbcType="VARCHAR"/>
+        <collection property="twoClassifyList" ofType="com.xzsd.pc.goodsClassify.entity.GoodsClassifyVo">
+            <id column="classify_id" property="classifyId" jdbcType="VARCHAR"/>
+            <result column="classify_name" property="classifyName" jdbcType="VARCHAR"/>
+            <result column="classify_parent" property="classifyParent" jdbcType="VARCHAR"/>
+            <result column="classify_comment" property="classifyComment" jdbcType="VARCHAR"/>
+            <result column="version" property="version" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+    <!--查询商品分类列表-->
+    <select id="listAllGoodsClassify" resultMap="oneClassifyList">
+        select
+            a.classify_id,
+            a.classify_name,
+            a.classify_parent,
+            a.classify_comment,
+            a.version,
+            b.classify_id,
+            b.classify_name,
+            b.classify_parent,
+            b.classify_comment,
+            b.version
+        from t_info_goods_classify a
+        left join t_info_goods_classify b
+        on a.classify_id = b.classify_parent
+        where a.classify_parent = 0
+        and a.is_deleted = 0
+        and b.is_deleted = 0
+    </select>
+
+</mapper>

@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.pc.goods.dao.GoodsDao">
+    <!--统计商品书号数量-->
+    <select id="countBookNum" parameterType="com.xzsd.pc.goods.entity.GoodsInfo" resultType="int">
+        select count(book_number)
+        from t_goods_command
+        where is_deleted = 0
+        and book_number = #{bookNum}
+        <if test="goodsId != null and goodsId != ''">
+            and goods_code != #{goodsId}
+        </if>
+    </select>
+    <!--新增商品-->
+    <insert id="addGoods" parameterType="com.xzsd.pc.goods.entity.GoodsInfo">
+        insert into t_goods_command
+        (goods_code,
+        goods_name,
+        sell_price,
+        sell_number,
+        make_price,
+        author,
+        primary_classification_code,
+        secondary_classification_code,
+        goods_message,
+        publishing_house,
+        goods_introduction,
+        goods_state,
+        putaway_time,
+        goods_avg_evaluate_leve,
+        stock,
+        book_number,
+        from_picture,
+        is_deleted,
+        create_time,
+        create_by,
+        update_time,
+        update_by,
+        version)
+        values
+        (#{goodsId},
+        #{goodsName},
+        #{salePrice},
+        #{saleNum},
+        #{makePrice},
+        #{author},
+        #{firstClassifyId},
+        #{secondClassifyId},
+        #{goodsMessage},
+        #{publishingHouse},
+        #{goodsIntroduction},
+        0,
+        '0000-00-00-00:00',
+        0,
+        #{stockNum},
+        #{bookNum},
+        0,
+        #{isDeleted},
+        now(),
+        #{createBy},
+        now(),
+        #{lastModifiedBy},
+        0)
+    </insert>
+
+    <!--删除商品-->
+    <update id="deleteGoods" parameterType="com.xzsd.pc.goods.entity.GoodsInfo">
+        update t_goods_command
+        set
+        is_deleted = 1,
+        update_time = now(),
+        update_by   = #{userCode},
+        version = version + 1
+        where goods_code in
+        <foreach item="goodsId" index="index" collection="listId" open="(" separator="," close=")">
+            #{goodsId}
+        </foreach>
+    </update>
+
+    <!--修改商品-->
+    <update id="updateGoods" parameterType="com.xzsd.pc.goods.entity.GoodsInfo">
+        update t_goods_command
+        set
+        goods_name                    = #{goodsName},
+        sell_price                    = #{salePrice},
+        sell_number                   = #{saleNum},
+        make_price                    = #{makePrice},
+        author                        = #{author},
+        primary_classification_code   = #{firstClassifyId},
+        secondary_classification_code = #{secondClassifyId},
+        goods_message                 = #{goodsMessage},
+        publishing_house              = #{publishingHouse},
+        goods_introduction            = #{goodsIntroduction},
+        goods_state                   = #{goodsState},
+        stock                         = #{stockNum},
+        book_number                   = #{bookNum},
+        update_time                   = now(),
+        update_by                     = #{lastModifiedBy},
+        version                       = version + 1
+        where goods_code = #{goodsId}
+        and version = #{version}
+    </update>
+
+    <!--查询商品信息-->
+    <select id="getGoods" parameterType="java.lang.String" resultType="com.xzsd.pc.goods.entity.GoodsInfo">
+        select
+            goods_name goodsName,
+            sell_price salePrice,
+            sell_number saleNum,
+            make_price makePrice,
+            author author,
+            primary_classification_code firstClassifyId,
+            secondary_classification_code secondClassifyId,
+            goods_message goodsMessage,
+            publishing_house publishingHouse,
+            goods_introduction goodsIntroduction,
+            -- goods_state goodsState,
+            stock stockNum,
+            book_number bookNum,
+            version
+        from t_goods_command
+        where goods_code = #{goodsId}
+        and is_deleted = 0
+    </select>
+
+    <!--分页查询商品列表-->
+    <select id="listGoods" parameterType="com.xzsd.pc.goods.entity.GoodsInfo" resultType="com.xzsd.pc.goods.entity.GoodsInfo">
+        select
+            a.goods_name goodsName,
+            a.sell_price salePrice,
+            a.sell_number saleNum,
+            a.make_price makePrice,
+            a.author author,
+            a.primary_classification_code firstClassifyId,
+            a.secondary_classification_code secondClassifyId,
+            a.goods_message goodsMessage,
+            a.publishing_house publishingHouse,
+            a.goods_introduction goodsIntroduction,
+            -- goods_state goodsState,
+            a.stock stockNum,
+            a.book_number bookNum,
+            a.version
+        from t_goods_command a
+        where a.is_deleted = 0
+        <if test="goodsName != null and goodsName != ''">
+            and a.goods_name like concat('%', #{goodsName}, '%')
+        </if>
+        <if test="goodsState != null and goodsState != ''">
+            and a.goods_state like concat('%', #{goodsState}, '%')
+        </if>
+        <if test="goodsMessage != null and goodsMessage != ''">
+            and a.goods_message like concat('%', #{goodsMessage}, '%')
+        </if>
+        <if test="publishingHouse != null and publishingHouse != ''">
+            and a.publishing_house like concat('%', #{publishingHouse}, '%')
+        </if>
+        <if test="author != null and author != ''">
+            and a.author like concat('%', #{author}, '%')
+        </if>
+        order by create_time desc
+    </select>
+
+    <!--MQ练习-->
+    <insert id="mqGoods" parameterType="com.xzsd.pc.goods.entity.GoodsInfo">
+        insert into MQtest
+        (
+        id,
+        create_time,
+        content
+        )
+        values
+        (
+        #{goodsId},
+        now(),
+        #{goodsName}
+        )
+    </insert>
+
+    <!--查询商品分类下拉框-->
+    <select id="listGoodsClassify" parameterType="java.lang.String" resultType="com.xzsd.pc.goods.entity.GoodsInfo">
+        select
+        a.classify_id classifyId,
+        a.classify_name classifyName
+        from t_goods_command a
+        where a.is_deleted = 0
+        <if test="goodsName != null and goodsName != ''">
+            and a.goods_name like concat('%', #{goodsName}, '%')
+        </if>
+
+        order by create_time desc
+    </select>
+</mapper>
