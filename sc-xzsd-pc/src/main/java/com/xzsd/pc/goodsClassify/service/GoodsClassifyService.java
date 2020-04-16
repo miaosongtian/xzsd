@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -88,6 +89,4 @@ public class GoodsClassifyService {
         List<GoodsClassifyInfo> oneClassifyList = goodsClassifyDao.listAllGoodsClassify();
         return AppResponse.success("查询成功！",oneClassifyList);
     }
-
-
 }

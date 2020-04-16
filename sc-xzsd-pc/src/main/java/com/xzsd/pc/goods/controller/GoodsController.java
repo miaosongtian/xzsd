@@ -4,6 +4,7 @@ package com.xzsd.pc.goods.controller;
 
 
 import com.neusoft.core.restful.AppResponse;
+import com.neusoft.security.client.utils.SecurityUtils;
 import com.neusoft.util.AuthUtils;
 import com.xzsd.pc.goods.entity.GoodsInfo;
 import com.xzsd.pc.goods.service.GoodsService;
@@ -31,7 +32,7 @@ public class GoodsController {
     public AppResponse addGoods(GoodsInfo goodsInfo) {
         try {
             //获取用户id
-            String userCode = AuthUtils.getCurrentUserId();
+            String userCode =  SecurityUtils.getCurrentUserId();
             goodsInfo.setCreateBy(userCode);
             AppResponse appResponse = goodsService.addGoods(goodsInfo);
             return appResponse;
@@ -51,7 +52,7 @@ public class GoodsController {
     public AppResponse deleteGoods (String goodsId){
         try{
             //删除商品
-            String userCode = AuthUtils.getCurrentUserId();
+            String userCode =  SecurityUtils.getCurrentUserId();
             GoodsInfo goodsInfo = new GoodsInfo();
             goodsInfo.setLastModifiedBy(userCode);
             return goodsService.deleteGoods(goodsId,userCode);
@@ -63,7 +64,7 @@ public class GoodsController {
     }
 
     /**
-     * 更改商品
+     * 修改商品
      * author:miaosongtian
      * time:2020-03-29
      */
@@ -71,7 +72,7 @@ public class GoodsController {
     public AppResponse updateGoods (GoodsInfo goodsInfo){
         try{
             //更改商品
-            String userCode = AuthUtils.getCurrentUserId();
+            String userCode =  SecurityUtils.getCurrentUserId();
             goodsInfo.setLastModifiedBy(userCode);
             return goodsService.updateGoods(goodsInfo);
         }catch (Exception e) {
@@ -120,11 +121,30 @@ public class GoodsController {
      * time:2020-4-9
      */
     @PostMapping("listGoodsClassify")
-    public AppResponse listGoodsClassify(String classfyId){
+    public AppResponse listGoodsClassify(String classifyId){
         try {
-            return goodsService.listGoodsClassify(classfyId);
+            return goodsService.listGoodsClassify(classifyId);
         } catch (Exception e) {
             logger.error("查询商品分类下拉框异常", e);
+            System.out.println(e.toString());
+            throw e;
+        }
+    }
+
+    /**
+     * 批量修改商品状态
+     * author:miaosongtian
+     * time:2020-4-14
+     */
+    @PostMapping("updateGoodsShelfState")
+    public AppResponse updateGoodsShelfState (GoodsInfo goodsInfo){
+        try{
+            //修改商品状态
+            String userCode =  SecurityUtils.getCurrentUserId();
+            goodsInfo.setLastModifiedBy(userCode);
+            return goodsService.updateGoodsShelfState(goodsInfo);
+        }catch (Exception e) {
+            logger.error("商品状态修改错误", e);
             System.out.println(e.toString());
             throw e;
         }

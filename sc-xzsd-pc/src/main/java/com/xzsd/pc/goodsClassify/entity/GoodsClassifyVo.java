@@ -6,19 +6,19 @@ public class GoodsClassifyVo {
     /**
      * 商品分类名称
      */
-    private String classifyName;
+    private String secClassifyName;
     /**
      * 商品分类id
      */
-    private String classifyId;
+    private String secClassifyId;
     /**
      * 商品分类备注
      */
-    private String classifyComment;
+    private String secClassifyComment;
     /**
      * 父级编号
      */
-    private String classifyParent;
+    private String secClassifyParent;
     /**
      * 备注
      */
@@ -50,38 +50,38 @@ public class GoodsClassifyVo {
     /**
      * 版本号
      */
-    private String version;
+    private String secVersion;
 
-    public String getClassifyName() {
-        return classifyName;
+    public String getSecClassifyName() {
+        return secClassifyName;
     }
 
-    public void setClassifyName(String classifyName) {
-        this.classifyName = classifyName;
+    public void setSecClassifyName(String secClassifyName) {
+        this.secClassifyName = secClassifyName;
     }
 
-    public String getClassifyId() {
-        return classifyId;
+    public String getSecClassifyId() {
+        return secClassifyId;
     }
 
-    public void setClassifyId(String classifyId) {
-        this.classifyId = classifyId;
+    public void setSecClassifyId(String secClassifyId) {
+        this.secClassifyId = secClassifyId;
     }
 
-    public String getClassifyComment() {
-        return classifyComment;
+    public String getSecClassifyComment() {
+        return secClassifyComment;
     }
 
-    public void setClassifyComment(String classifyComment) {
-        this.classifyComment = classifyComment;
+    public void setSecClassifyComment(String secClassifyComment) {
+        this.secClassifyComment = secClassifyComment;
     }
 
-    public String getClassifyParent() {
-        return classifyParent;
+    public String getSecClassifyParent() {
+        return secClassifyParent;
     }
 
-    public void setClassifyParent(String classifyParent) {
-        this.classifyParent = classifyParent;
+    public void setSecClassifyParent(String secClassifyParent) {
+        this.secClassifyParent = secClassifyParent;
     }
 
     public String getRemark() {
@@ -140,11 +140,11 @@ public class GoodsClassifyVo {
         this.lastModifiedBy = lastModifiedBy;
     }
 
-    public String getVersion() {
-        return version;
+    public String getSecVersion() {
+        return secVersion;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
+    public void setSecVersion(String secVersion) {
+        this.secVersion = secVersion;
     }
 }

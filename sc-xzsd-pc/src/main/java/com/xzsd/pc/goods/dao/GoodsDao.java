@@ -1,6 +1,7 @@
 package com.xzsd.pc.goods.dao;
 
 
+import com.xzsd.pc.goods.entity.Goods;
 import com.xzsd.pc.goods.entity.GoodsInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -14,7 +15,6 @@ import java.util.List;
  */
 @Mapper
 public interface GoodsDao {
-
     /**
      * 新增商品
      */
@@ -22,7 +22,7 @@ public interface GoodsDao {
     /**
      * 计算商品书号数量
      */
-    int countBookNum(GoodsInfo goodsInfo);
+    int countIsbn(GoodsInfo goodsInfo);
     /**
      * 删除商品
      */
@@ -46,5 +46,9 @@ public interface GoodsDao {
     /**
      * 查询商品分类下拉框
      */
-    List<String> listGoodsClassify(@Param("classfyId")String classfyId) ;
+    List<String> listGoodsClassify(@Param("classifyId") String classifyId);
+    /**
+     * 修改商品状态
+     */
+    int updateGoodsShelfState(@Param("listUpdata") List<Goods> listUpdata);
 }
