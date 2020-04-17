@@ -113,4 +113,26 @@
         </if>
         order by a.create_time desc
     </select>
+
+    <!--查询热门商品展示数量-->
+    <select id="getHotGoodsShowNum" resultType="com.xzsd.pc.hotGoods.entity.HotGoodsInfo">
+        select
+            a.value hotGoodsShowNum,
+            a.version
+        from t_dictionaries a
+        where a.code = 1
+        and a.is_deleted = 0
+    </select>
+
+    <!--修改热门商品展示数量-->
+    <update id="updateHotGoodsShowNum" parameterType="com.xzsd.pc.hotGoods.entity.HotGoodsInfo">
+        update t_dictionaries a
+        set
+            a.value         = #{hotGoodsShowNum},
+            a.update_time   = now(),
+            a.update_by     = #{lastModifiedBy},
+            a.version       = version + 1
+        where code = 1
+        and version = #{version}
+    </update>
 </mapper>
