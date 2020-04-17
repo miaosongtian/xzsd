@@ -114,34 +114,25 @@
         order by a.create_time desc
     </select>
 
-    <!--分页查询轮播图列表-->
-    <select id="listSlideshowHome" parameterType="com.xzsd.pc.slideshowHome.entity.SlideshowHomeInfo" resultType="com.xzsd.pc.slideshowHome.entity.SlideshowHomeInfo">
+    <!--查询热门商品展示数量-->
+    <select id="getHotGoodsShowNum" resultType="com.xzsd.pc.hotGoods.entity.HotGoodsInfo">
         select
-            a.slideshow_num slideshowNum,
-            a.slideshow_path slideshowPath,
-            a.slideshow_state_id slideshowStateId,
-            a.start_time startTime,
-            a.end_time endTime,
-            a.slideshow_id slideshowId,
+            a.value hotGoodsShowNum,
             a.version
-        from t_info_slideshow_home a
-        where a.is_deleted = 0
-        <if test="slideshowId != null and slideshowId != ''">
-            and a.slideshow_id like concat('%', #{slideshowId}, '%')
-        </if>
-        order by a.create_time desc
+        from t_dictionaries a
+        where a.code = 1
+        and a.is_deleted = 0
     </select>
 
-    <update id="updateSlideshowHomeState" parameterType="java.util.List">
-        <foreach item="item" index="index" collection="listUpdata" open="" separator=";" close=";">
-            update t_info_slideshow_home
-            set
-                slideshow_state_id = #{item.slideshowStateId},
-                update_time    = now(),
-                update_user    = #{item.userCode},
-                version        = version + 1
-            where slideshow_id = #{item.slideshowId}
-            and version = #{item.version}
-        </foreach>
+    <!--修改热门商品展示数量-->
+    <update id="updateHotGoodsShowNum" parameterType="com.xzsd.pc.hotGoods.entity.HotGoodsInfo">
+        update t_dictionaries a
+        set
+            a.value         = #{hotGoodsShowNum},
+            a.update_time   = now(),
+            a.update_by     = #{lastModifiedBy},
+            a.version       = version + 1
+        where code = 1
+        and version = #{version}
     </update>
 </mapper>

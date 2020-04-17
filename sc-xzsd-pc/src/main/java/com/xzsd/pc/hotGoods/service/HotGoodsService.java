@@ -106,4 +106,29 @@ public class HotGoodsService {
         PageInfo<HotGoodsInfo> pageData = new PageInfo<HotGoodsInfo>(hotGoodsInfoList);
         return AppResponse.success("查询成功！", pageData);
     }
+
+    /**
+     * 查询热门商品展示数量
+     * author:miaosongtian
+     * time:2020-4-17
+     */
+    public AppResponse getHotGoodsShowNum(){
+        HotGoodsInfo hotGoodsInfo = hotGoodsDao.getHotGoodsShowNum();
+        return AppResponse.success("查询成功！",hotGoodsInfo);
+    }
+
+    /**
+     * 修改热门商品展示数量
+     * author:miaosongtian
+     * time:2020-4-17
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public AppResponse updateHotGoodsShowNum(HotGoodsInfo hotGoodsInfo) {
+        AppResponse appResponse =  AppResponse.success("修改成功！");
+        int count = hotGoodsDao.updateHotGoodsShowNum(hotGoodsInfo);
+        if(0 == count) {
+            appResponse = AppResponse.bizError("修改失败，请重试！");
+        }
+        return appResponse;
+    }
 }

@@ -131,4 +131,38 @@ public class HotGoodsController {
             throw e;
         }
     }
+
+    /**
+     * 查询热门商品展示数量
+     * author:miaosongtian
+     * time:2020-4-17
+     */
+    @PostMapping("getHotGoodsShowNum")
+    public AppResponse getHotGoodsShowNum(){
+        try {
+            return hotGoodsService.getHotGoodsShowNum();
+        } catch (Exception e) {
+            logger.error("查询商品展示数量异常", e);
+            System.out.println(e.toString());
+            throw e;
+        }
+    }
+
+    /**
+     * 修改热门商品展示数量
+     * author:miaosongtian
+     * time:2020-4-17
+     */
+    @PostMapping("updateHotGoodsShowNum")
+    public AppResponse updateHotGoodsShowNum(HotGoodsInfo hotGoodsInfo){
+        try {
+            String userCode =  SecurityUtils.getCurrentUserId();
+            hotGoodsInfo.setLastModifiedBy(userCode);
+            return hotGoodsService.updateHotGoodsShowNum(hotGoodsInfo);
+        } catch (Exception e) {
+            logger.error("修改商品展示数量异常", e);
+            System.out.println(e.toString());
+            throw e;
+        }
+    }
 }

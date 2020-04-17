@@ -36,4 +36,12 @@ public interface HotGoodsDao {
      * 分页查询热门商品列表
      */
     List<HotGoodsInfo> listHotGoods(HotGoodsInfo hotGoodsInfo);
+    /**
+     * 查询热门商品展示数量
+     */
+    HotGoodsInfo getHotGoodsShowNum();
+    /**
+     * 修改热门商品展示数量
+     */
+    int updateHotGoodsShowNum(HotGoodsInfo hotGoodsInfo);
 }
