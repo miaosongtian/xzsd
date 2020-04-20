@@ -1,11 +1,7 @@
 package com.xzsd.pc.goods.controller;
 
-
-
-
 import com.neusoft.core.restful.AppResponse;
 import com.neusoft.security.client.utils.SecurityUtils;
-import com.neusoft.util.AuthUtils;
 import com.xzsd.pc.goods.entity.GoodsInfo;
 import com.xzsd.pc.goods.service.GoodsService;
 import org.slf4j.Logger;
@@ -13,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.annotation.Resource;
 
 @RestController

@@ -85,7 +85,7 @@ public class HotGoodsService {
     }
 
     /**
-     * 查询商品详情
+     * 查询热门商品详情
      * author:miaosongtian
      * time:2020-03-29
      */

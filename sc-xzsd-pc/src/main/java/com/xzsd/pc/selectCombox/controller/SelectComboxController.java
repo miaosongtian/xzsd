@@ -4,6 +4,7 @@ import com.neusoft.core.restful.AppResponse;
 import com.xzsd.pc.selectCombox.service.SelectComboxService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +25,17 @@ public class SelectComboxController {
      */
     @PostMapping("listArea")
     public AppResponse listArea(String areaId) {
+        try {
+            return selectComboxService.listArea(areaId);
+        } catch (Exception e) {
+            logger.error("查询省市区下拉框异常", e);
+            System.out.println(e.toString());
+            throw e;
+        }
+    }
+
+    @GetMapping("listArea1")
+    public AppResponse listArea1(String areaId) {
         try {
             return selectComboxService.listArea(areaId);
         } catch (Exception e) {

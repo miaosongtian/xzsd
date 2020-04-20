@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.pc.driver.dao.DriverDao">
+    <!--统计司机账号数量-->
+    <select id="countUserAcct" parameterType="com.xzsd.pc.driver.entity.DriverInfo" resultType="int">
+        select count(driver_account)
+        from t_driver_message_command
+        where is_deleted = 0
+        and driver_account = #{userAcct}
+        <if test="driverId != null and driverId != ''">
+            and driver_code != #{driverId}
+        </if>
+    </select>
+
+    <!--新增司机-->
+    <insert id="addDriver" parameterType="com.xzsd.pc.driver.entity.DriverInfo">
+        insert into t_driver_message_command
+            (driver_code,
+            driver_name,
+            driver_account,
+            driver_password,
+            driver_id_card_number,
+            driver_phone,
+            province_code,
+            city_code,
+            area_code,
+            is_deleted,
+            create_time,
+            create_by,
+            update_time,
+            update_by,
+            version)
+            values
+            (#{driverId},
+            #{userName},
+            #{userAcct},
+            #{userPassword},
+            #{idCard},
+            #{phone},
+            #{provinceId},
+            #{cityId},
+            #{areaId},
+            #{isDeleted},
+            now(),
+            #{createBy},
+            now(),
+            #{lastModifiedBy},
+            0)
+    </insert>
+
+    <!--分页查询司机列表（管理员）-->
+    <select id="listDrivers" parameterType="com.xzsd.pc.driver.entity.DriverInfo" resultType="com.xzsd.pc.driver.entity.DriverInfo">
+        select
+            a.driver_code driverId,
+            a.driver_name userName,
+            a.driver_phone phone,
+            a.driver_id_card_number idCard,
+            a.driver_account userAcct,
+            a.version
+        from t_driver_message_command a
+        where a.is_deleted = 0
+        <if test="driverId != null and driverId != ''">
+            and a.driver_code like concat('%', #{driverId}, '%')
+        </if>
+        <if test="userName != null and userName != ''">
+            and a.driver_name like concat('%', #{userName}, '%')
+        </if>
+        <if test="provinceId != null and provinceId != ''">
+            and a.province_code like concat('%', #{provinceId}, '%')
+        </if>
+        <if test="cityId != null and cityId != ''">
+            and a.city_code like concat('%', #{cityId}, '%')
+        </if>
+        <if test="areaId != null and areaId != ''">
+            and a.area_code like concat('%', #{areaId}, '%')
+        </if>
+        order by a.create_time desc
+    </select>
+
+    <!--查询司机列表（店长）-->
+    <select id="listDriverRole2" parameterType="com.xzsd.pc.driver.entity.DriverInfo" resultType="com.xzsd.pc.driver.entity.DriverInfo">
+        select
+            a.driver_code driverId,
+            a.driver_name userName,
+            a.driver_phone phone,
+            a.driver_id_card_number idCard,
+            a.driver_account userAcct,
+            a.version
+        from t_driver_message_command a
+        left join t_info_store b
+        on a.area_code = b.area_id
+        where a.is_deleted = 0
+        and b.is_deleted = 0
+        and b.user_id = #{createBy}
+        <if test="driverId != null and driverId != ''">
+            and a.driver_code like concat('%', #{driverId}, '%')
+        </if>
+        <if test="userName != null and userName != ''">
+            and a.driver_name like concat('%', #{userName}, '%')
+        </if>
+    </select>
+
+</mapper>
