@@ -29,8 +29,8 @@ public class ClientController {
     public AppResponse listClients(ClientInfo clientInfo){
         try {
             //获取用户id
-//            String userCode =  SecurityUtils.getCurrentUserId();
-//            clientInfo.setCreateBy(userCode);
+            String userCode = SecurityUtils.getCurrentUserId();
+            clientInfo.setCreateBy(userCode);
             return clientService.listClients(clientInfo);
         } catch (Exception e) {
             logger.error("查询客户信息列表异常", e);

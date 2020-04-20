@@ -13,6 +13,10 @@ public interface StoreDao {
      */
     int countBusinessCode(StoreInfo storeInfo);
     /**
+     * 统计店长编号数量
+     */
+    int countUserId(StoreInfo storeInfo);
+    /**
      * 新增门店
      */
     int addStore(StoreInfo storeInfo);

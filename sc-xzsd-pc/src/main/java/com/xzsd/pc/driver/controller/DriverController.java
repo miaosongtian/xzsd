@@ -57,4 +57,60 @@ public class DriverController {
             throw e;
         }
     }
+
+    /**
+     * 查询司机详情
+     * author:miaosongtian
+     * time:2020-4-19
+     */
+    @PostMapping("getDriver")
+    public AppResponse getDriver (String driverId){
+        try{
+            //查询司机详情
+            return driverService.getDriver(driverId);
+        }catch (Exception e) {
+            logger.error("司机查询详情错误", e);
+            System.out.println(e.toString());
+            throw e;
+        }
+    }
+
+    /**
+     * 修改司机
+     * author:miaosongtian
+     * time:2020-04-19
+     */
+    @PostMapping("updateDriver")
+    public AppResponse updateDriver (DriverInfo driverInfo){
+        try{
+            //修改门店
+            String userCode = SecurityUtils.getCurrentUserId();
+            driverInfo.setLastModifiedBy(userCode);
+            return driverService.updateDriver(driverInfo);
+        }catch (Exception e) {
+            logger.error("司机修改错误", e);
+            System.out.println(e.toString());
+            throw e;
+        }
+    }
+
+    /**
+     * 删除司机
+     * author:miaosongtian
+     * time:2020-4-19
+     */
+    @PostMapping("deleteDriver")
+    public AppResponse deleteDriver (String driverId){
+        try{
+            //删除司机
+            String userCode =  SecurityUtils.getCurrentUserId();
+            DriverInfo driverInfo = new DriverInfo();
+            driverInfo.setLastModifiedBy(userCode);
+            return driverService.deleteDriver(driverId,userCode);
+        }catch (Exception e) {
+            logger.error("司机删除错误", e);
+            System.out.println(e.toString());
+            throw e;
+        }
+    }
 }

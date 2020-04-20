@@ -12,6 +12,15 @@
         </if>
     </select>
 
+    <!--统计店长编号数量-->
+    <select id="countUserId" parameterType="com.xzsd.pc.store.entity.StoreInfo" resultType="int">
+        select count(user_code)
+        from t_sys_user
+        where is_deleted = 0
+        and user_code = #{userId}
+        and role = 2
+    </select>
+
     <!--新增门店-->
     <insert id="addStore" parameterType="com.xzsd.pc.store.entity.StoreInfo">
         insert into t_info_store

@@ -27,6 +27,9 @@ public class OrderController {
     @PostMapping("listOrders")
     public AppResponse listOrders(OrderInfo orderInfo){
         try {
+            //获取当前登录用户id
+//            String userCode = SecurityUtils.getCurrentUserId();
+//            orderInfo.setLastModifiedBy(userCode);
             return orderServoce.listOrders(orderInfo);
         } catch (Exception e) {
             logger.error("查询订单列表异常", e);
@@ -61,7 +64,7 @@ public class OrderController {
     public AppResponse updateOrderState (OrderInfo orderInfo){
         try{
             //修改订单状态
-            String userCode =  SecurityUtils.getCurrentUserId();
+            String userCode = SecurityUtils.getCurrentUserId();
             orderInfo.setLastModifiedBy(userCode);
             return orderServoce.updateOrderState(orderInfo);
         }catch (Exception e) {

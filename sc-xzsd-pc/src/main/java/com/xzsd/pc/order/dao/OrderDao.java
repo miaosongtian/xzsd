@@ -11,9 +11,13 @@ import java.util.List;
 @Mapper
 public interface OrderDao {
     /**
-     * 分页查询订单列表
+     * 分页查询订单列表（管理员）
      */
     List<OrderInfo> listOrders(OrderInfo orderInfo);
+    /**
+     * 分页查询订单列表（店长）
+     */
+    List<OrderInfo> listOrdersRole2(OrderInfo orderInfo);
     /**
      * 查询商品详情
      */

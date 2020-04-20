@@ -24,6 +24,7 @@
             province_code,
             city_code,
             area_code,
+            image_path,
             is_deleted,
             create_time,
             create_by,
@@ -100,4 +101,66 @@
         </if>
     </select>
 
+    <!--查询司机详情信息-->
+    <select id="getDriver" parameterType="java.lang.String" resultType="com.xzsd.pc.driver.entity.DriverInfo">
+        select
+            a.driver_code driverId,
+            a.driver_name userName,
+            a.driver_phone phone,
+            a.driver_account userAcct,
+            a.driver_password userPassword,
+            a.image_path userImage,
+            a.driver_id_card_number idCard,
+            a.province_code provinceId,
+            a.city_code cityId,
+            a.area_code areaId,
+            c.area_name provinceName,
+            d.area_name cityName,
+			e.area_name areaName,
+            a.version
+        from
+			t_driver_message_command a
+        left join
+			((t_info_area_level c
+			left join t_info_area_level d
+			on d.parent_id = c.area_id)
+            left join t_info_area_level e
+			on d.area_id = e.parent_id)
+		on a.area_code = e.area_id
+        where a.driver_code = #{driverId}
+        and a.is_deleted = 0
+    </select>
+
+    <!--修改司机-->
+    <update id="updateDriver" parameterType="com.xzsd.pc.driver.entity.DriverInfo">
+        update t_driver_message_command
+        set
+            driver_name           = #{userName},
+            driver_phone          = #{phone},
+            driver_account        = #{userAcct},
+            driver_password       = #{userPassword},
+            image_path            = #{imagePath},
+            driver_id_card_number = #{idCard},
+            province_code         = #{provinceId},
+            city_code             = #{cityId},
+            area_code             = #{areaId},
+            update_by             = #{lastModifiedBy},
+            version               = version + 1
+        where driver_code = #{driverId}
+        and version = #{version}
+    </update>
+
+    <!--删除司机-->
+    <update id="deleteDriver" parameterType="com.xzsd.pc.driver.entity.DriverInfo">
+        update t_driver_message_command
+        set
+            is_deleted  = 1,
+            update_time = now(),
+            update_by = #{userCode},
+            version     = version + 1
+        where driver_code in
+        <foreach item="driverId" index="index" collection="listId" open="(" separator="," close=")">
+            #{driverId}
+        </foreach>
+    </update>
 </mapper>

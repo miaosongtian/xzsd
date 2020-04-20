@@ -26,11 +26,20 @@ public class OrderService {
      * time:2020-04-15
      */
     public AppResponse listOrders(OrderInfo orderInfo) {
-        PageHelper.startPage(orderInfo.getPageNum(), orderInfo.getPageSize());
-        List<OrderInfo> orderInfoList = orderDao.listOrders(orderInfo);
-        // 包装Page对象
-        PageInfo<OrderInfo> pageData = new PageInfo<OrderInfo>(orderInfoList);
-        return AppResponse.success("查询成功！", pageData);
+        //当角色为0超级管理员或1管理员时，查询所有数据
+        if (orderInfo.getRole().equals("1") || orderInfo.getRole().equals("0")) {
+            PageHelper.startPage(orderInfo.getPageNum(), orderInfo.getPageSize());
+            List<OrderInfo> orderInfoList = orderDao.listOrders(orderInfo);
+            // 包装Page对象
+            PageInfo<OrderInfo> pageData = new PageInfo<OrderInfo>(orderInfoList);
+            return AppResponse.success("查询成功！", pageData);
+        }else if (orderInfo.getRole().equals("2")){
+            PageHelper.startPage(orderInfo.getPageNum(), orderInfo.getPageSize());
+            List<OrderInfo> orderInfoRole2 = orderDao.listOrdersRole2(orderInfo);
+            // 包装Page对象
+            PageInfo<OrderInfo> pageData = new PageInfo<OrderInfo>(orderInfoRole2);
+            return AppResponse.success("查询成功！", pageData);
+        }else return AppResponse.success("角色没有权限访问！");
     }
 
     /**

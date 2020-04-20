@@ -26,6 +26,10 @@ public class DriverInfo {
     /**
      * 头像路径
      */
+    private String userImage;
+    /**
+     * 用户头像图片路径
+     */
     private String imagePath;
     /**
      * 司机账号
@@ -290,5 +294,13 @@ public class DriverInfo {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public String getUserImage() {
+        return userImage;
+    }
+
+    public void setUserImage(String userImage) {
+        this.userImage = userImage;
     }
 }

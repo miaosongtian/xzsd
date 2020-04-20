@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -62,5 +63,52 @@ public class DriverService {
             return AppResponse.success("查询成功！", pageData);
         }
         else return AppResponse.success("角色没有权限！");
+    }
+
+    /**
+     * 查询司机详情
+     * author:miaosongtian
+     * time:2020-4-19
+     */
+    public AppResponse getDriver(String driverId){
+        DriverInfo driverInfo = driverDao.getDriver(driverId);
+        return AppResponse.success("查询成功！",driverInfo);
+    }
+
+    /**
+     * 修改司机
+     * author:miaosongtian
+     * time:2020-4-19
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public AppResponse updateDriver(DriverInfo driverInfo) {
+        AppResponse appResponse =  AppResponse.success("修改成功！");
+        // 校验账号是否存在
+        int countUserAcct = driverDao.countUserAcct(driverInfo);
+        if(0 != countUserAcct) {
+            return AppResponse.bizError("司机账号已存在，请重新输入！");
+        }
+        // 修改门店
+        int count = driverDao.updateDriver(driverInfo);
+        if(0 == count) {
+            appResponse = AppResponse.bizError("修改失败，请重试！");
+        }
+        return appResponse;
+    }
+
+    /**
+     * 删除司机
+     * author:miaosongtian
+     * time:2020-4-19
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public AppResponse deleteDriver(String driverId,String userCode) {
+        List<String> listId = Arrays.asList(driverId.split(","));
+        AppResponse appResponse = AppResponse.success("删除成功！");
+        int count = driverDao.deleteDriver(listId,userCode);
+        if(0 == count) {
+            appResponse = AppResponse.bizError("删除失败，请重试！");
+        }
+        return appResponse;
     }
 }

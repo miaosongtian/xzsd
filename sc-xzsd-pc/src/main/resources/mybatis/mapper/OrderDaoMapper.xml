@@ -17,7 +17,7 @@
         and is_deleted = 0
     </select>
 
-    <!--分页查询订单列表-->
+    <!--分页查询订单列表（管理员）-->
     <select id="listOrders" parameterType="com.xzsd.pc.order.entity.OrderInfo" resultType="com.xzsd.pc.order.entity.OrderInfo">
         select
             a.order_id orderId,
@@ -49,6 +49,46 @@
             and a.pay_time &lt;= #{payTimeEnd}
         </if>
         order by create_time desc
+    </select>
+
+    <!--分页查询订单列表（店长）-->
+    <select id="listOrders" parameterType="com.xzsd.pc.order.entity.OrderInfo" resultType="com.xzsd.pc.order.entity.OrderInfo">
+        select
+            a.order_id orderId,
+            a.order_all_cost orderAllCost,
+            a.order_state orderStateId,
+            a.store_id storeId,
+            a.user_name userName,
+            a.phone phone,
+            a.pay_time payTime,
+            a.version
+        from t_info_order a
+        where a.is_deleted = 0
+        and a.store_id in (
+            select
+                store_id
+            from t_info_store
+            where user_id = #{createBy}
+        )
+        <if test="userName != null and userName != ''">
+            and a.user_name like concat('%', #{userName}, '%')
+        </if>
+        <if test="phone != null and phone != ''">
+            and a.phone like concat('%', #{phone}, '%')
+        </if>
+        <if test="orderId != null and orderId != ''">
+            and a.order_id like concat('%', #{orderId}, '%')
+        </if>
+        <if test="orderStateId != null and orderStateId != ''">
+            and a.order_state like concat('%', #{orderStateId}, '%')
+        </if>
+        <if test="payTimeStart != null and payTimeStart != ''">
+            and a.pay_time &gt;= #{payTimeStart}
+        </if>
+        <if test="payTimeEnd != null and payTimeEnd != ''">
+            and a.pay_time &lt;= #{payTimeEnd}
+        </if>
+        order by a.create_time desc
     </select>
 
     <!--修改订单状态-->

@@ -28,6 +28,11 @@ public class StoreService {
         if(0 != countBusinessCode) {
             return AppResponse.bizError("营业执照编号已存在，请重新输入！");
         }
+        // 校验店长编号是否存在
+        int countUserId = storeDao.countUserId(storeInfo);
+        if(0 == countUserId) {
+            return AppResponse.bizError("该店长编号不存在，请重新输入！");
+        }
         storeInfo.setStoreId(StringUtil.getCommonCode(2));
         //生成随机邀请码
         storeInfo.setInviteCode(getRandomString(6));
@@ -64,20 +69,17 @@ public class StoreService {
      * time:2020-04-19
      */
     public AppResponse listStores(StoreInfo storeInfo) {
-        //当角色为0超级管理员或1管理员时，查询所有数据
+        //当角色为0超级管理员或1管理员时，查询所有数据,当角色2店为长时，查询该店长的数据
         if (storeInfo.getRole().equals("1") || storeInfo.getRole().equals("0")){
             PageHelper.startPage(storeInfo.getPageNum(), storeInfo.getPageSize());
             List<StoreInfo> storeInfoList = storeDao.listStores(storeInfo);
             // 包装Page对象
             PageInfo<StoreInfo> pageData = new PageInfo<StoreInfo>(storeInfoList);
              return AppResponse.success("查询成功！", pageData);
-        }
-        //当角色为2店长时，查询该店长的数据
-        else if (storeInfo.getRole().equals("2")){
+        }else if (storeInfo.getRole().equals("2")){
             StoreInfo storeInfoRole2 = storeDao.listStoresRole2(storeInfo);
             return AppResponse.success("查询成功！", storeInfoRole2);
-        }
-        else return AppResponse.success("角色异常！");
+        }else return AppResponse.success("角色异常！");
     }
 
     /**
@@ -102,6 +104,11 @@ public class StoreService {
         int countBusinessCode = storeDao.countBusinessCode(storeInfo);
         if(0 != countBusinessCode) {
             return AppResponse.bizError("营业执照编号已存在，请重新输入！");
+        }
+        // 校验店长编号是否存在
+        int countUserId = storeDao.countUserId(storeInfo);
+        if(0 == countUserId) {
+            return AppResponse.bizError("该店长编号不存在，请重新输入！");
         }
         // 修改门店
         int count = storeDao.updateStore(storeInfo);
