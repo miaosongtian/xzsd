@@ -52,7 +52,7 @@
     </select>
 
     <!--分页查询订单列表（店长）-->
-    <select id="listOrders" parameterType="com.xzsd.pc.order.entity.OrderInfo" resultType="com.xzsd.pc.order.entity.OrderInfo">
+    <select id="listOrdersRole2" parameterType="com.xzsd.pc.order.entity.OrderInfo" resultType="com.xzsd.pc.order.entity.OrderInfo">
         select
             a.order_id orderId,
             a.order_all_cost orderAllCost,
