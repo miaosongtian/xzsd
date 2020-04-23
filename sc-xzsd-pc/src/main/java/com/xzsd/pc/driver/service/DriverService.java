@@ -6,6 +6,7 @@ import com.neusoft.core.restful.AppResponse;
 import com.neusoft.util.StringUtil;
 import com.xzsd.pc.driver.dao.DriverDao;
 import com.xzsd.pc.driver.entity.DriverInfo;
+import com.xzsd.pc.utils.PasswordUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +33,9 @@ public class DriverService {
         }
         driverInfo.setDriverId(StringUtil.getCommonCode(2));
         driverInfo.setIsDeleted(0);
+        // 密码加密
+        String pwd = PasswordUtils.generatePassword(driverInfo.getUserPassword());
+        driverInfo.setUserPassword(pwd);
         // 新增门店
         int count = driverDao.addDriver(driverInfo);
         if(0 == count) {
@@ -88,6 +92,9 @@ public class DriverService {
         if(0 != countUserAcct) {
             return AppResponse.bizError("司机账号已存在，请重新输入！");
         }
+        // 密码加密
+        String pwd = PasswordUtils.generatePassword(driverInfo.getUserPassword());
+        driverInfo.setUserPassword(pwd);
         // 修改门店
         int count = driverDao.updateDriver(driverInfo);
         if(0 == count) {

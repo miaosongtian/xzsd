@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.app.register.dao.RegisterDao">
+    <!--统计用户账号数量-->
+    <select id="countAcct" parameterType="com.xzsd.app.register.entity.RegisterInfo" resultType="int">
+        select count(user_acct)
+        from t_sys_user
+        where is_deleted = 0
+        and user_acct = #{userAcct}
+    </select>
+
+    <!--统计门店邀请码数量-->
+    <select id="countInviteCode" parameterType="com.xzsd.app.register.entity.RegisterInfo" resultType="int">
+        select count(invite_code)
+        from t_info_store
+        where is_deleted = 0
+        and invite_code = #{inviteCode}
+    </select>
+
+    <!--注册客户-->
+    <insert id="clientRegister" parameterType="com.xzsd.app.register.entity.RegisterInfo">
+        insert into t_sys_user
+            (user_code,
+            user_name,
+            user_acct,
+            user_pwd,
+            id_card,
+            sex,
+            role,
+            phone,
+            email,
+            invite_num,
+            user_image,
+            is_deleted,
+            gmt_create,
+            create_by,
+            gmt_modified,
+            last_modified_by,
+            version)
+        values
+            (#{userId},
+            #{userName},
+            #{userAcct},
+            #{userPassword},
+            #{idCard},
+            #{sex},
+            4,
+            #{phone},
+            #{mail},
+            #{inviteCode},
+            #{imagePath},
+            0,
+            now(),
+            #{createBy},
+            now(),
+            #{lastModifiedBy},
+            0)
+    </insert>
+</mapper>

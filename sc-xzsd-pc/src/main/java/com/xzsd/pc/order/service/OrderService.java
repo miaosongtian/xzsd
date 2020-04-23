@@ -26,7 +26,7 @@ public class OrderService {
      * time:2020-04-15
      */
     public AppResponse listOrders(OrderInfo orderInfo) {
-        //当角色为0超级管理员或1管理员时，查询所有数据
+        //当角色为0超级管理员或1管理员时，查询所有数据，角色为2店长时，查店长的数据
         if (orderInfo.getRole().equals("1") || orderInfo.getRole().equals("0")) {
             PageHelper.startPage(orderInfo.getPageNum(), orderInfo.getPageSize());
             List<OrderInfo> orderInfoList = orderDao.listOrders(orderInfo);

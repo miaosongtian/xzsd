@@ -1,26 +1,54 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.xzsd.pc.client.dao.ClientDao">
-    <!--分页查询客户信息列表-->
+    <!--分页查询客户信息列表（管理员）-->
     <select id="listClients" parameterType="com.xzsd.pc.client.entity.ClientInfo" resultType="com.xzsd.pc.client.entity.ClientInfo">
         select
             a.user_acct userAcct,
             a.user_name userName,
             a.sex sex,
             a.phone phone,
-            a.mail mail,
+            a.email mail,
             a.id_card idCard,
             a.user_code userId
         from t_sys_user a
         where a.is_deleted = 0
-        and a.role = #{role}
+        and a.role = 4
         <if test="userName != null and userName != ''">
             and a.user_name like concat('%', #{userName}, '%')
         </if>
         <if test="userAcct != null and userAcct != ''">
             and a.user_acct like concat('%', #{userAcct}, '%')
         </if>
-        order by gmt_create desc
+        order by a.gmt_create desc
     </select>
 
+    <!--分页查询客户信息列表（店长）-->
+    <select id="listClientRole2" parameterType="com.xzsd.pc.client.entity.ClientInfo" resultType="com.xzsd.pc.client.entity.ClientInfo">
+        select
+            a.user_acct userAcct,
+            a.user_name userName,
+            a.sex sex,
+            a.phone phone,
+            a.email mail,
+            a.id_card idCard,
+            a.user_code userId
+        from t_sys_user a
+        where a.is_deleted = 0
+        and invite_num in (
+          select
+            invite_code
+          from
+            t_info_store
+          where
+            user_id = #{createBy}
+        )
+        <if test="userName != null and userName != ''">
+            and a.user_name like concat('%', #{userName}, '%')
+        </if>
+        <if test="userAcct != null and userAcct != ''">
+            and a.user_acct like concat('%', #{userAcct}, '%')
+        </if>
+        order by a.gmt_create desc
+    </select>
 </mapper>

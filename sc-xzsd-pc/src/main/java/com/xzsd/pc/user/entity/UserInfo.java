@@ -52,6 +52,10 @@ public class UserInfo {
      */
     private String imagePath;
     /**
+     * 返回图片地址
+     */
+    private String userImage;
+    /**
      * 备注
      */
     private String remark;
@@ -242,5 +246,13 @@ public class UserInfo {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public String getUserImage() {
+        return userImage;
+    }
+
+    public void setUserImage(String userImage) {
+        this.userImage = userImage;
     }
 }

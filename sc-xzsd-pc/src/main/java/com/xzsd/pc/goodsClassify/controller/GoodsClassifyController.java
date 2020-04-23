@@ -21,9 +21,9 @@ import javax.annotation.Resource;
 @RequestMapping("goodsClassify")
 public class GoodsClassifyController {
     private static final Logger logger = LoggerFactory.getLogger(GoodsClassifyController.class);
-
     @Resource
     private GoodsClassifyService goodsClassifyService;
+
     /**
      *  新增商品分类
      * author:miaosongtian

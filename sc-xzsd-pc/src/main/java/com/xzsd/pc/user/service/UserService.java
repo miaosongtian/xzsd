@@ -9,6 +9,7 @@ import com.neusoft.core.restful.AppResponse;
 import com.neusoft.util.StringUtil;
 import com.xzsd.pc.user.dao.UserDao;
 import com.xzsd.pc.user.entity.UserInfo;
+import com.xzsd.pc.utils.PasswordUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +41,10 @@ public class UserService {
         if(0 != countUserAcct) {
             return AppResponse.bizError("用户账号已存在，请重新输入！");
         }
+        // 密码加密
+        String pwd = PasswordUtils.generatePassword(userInfo.getUserPassword());
+        userInfo.setUserPassword(pwd);
+        //生成用户编号
         userInfo.setUserId(StringUtil.getCommonCode(2));
         userInfo.setIsDeleted(0);
         // 新增用户
@@ -66,6 +71,9 @@ public class UserService {
         if(0 != countUserAcct) {
             return AppResponse.bizError("用户账号已存在，请重新输入！");
         }
+        // 密码加密
+        String pwd = PasswordUtils.generatePassword(userInfo.getUserPassword());
+        userInfo.setUserPassword(pwd);
         // 修改用户信息
         int count = userDao.updateUser(userInfo);
         if (0 == count) {
@@ -96,7 +104,6 @@ public class UserService {
     }
     /**
      * 查询用户详情
-     *
      * @param userId
      * @return
      * @Author miaosongtian

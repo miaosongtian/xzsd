@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.app.clientHome.dao.ClientHomeDao">
+    <!--查询首页轮播图-->
+    <select id="listRotationCharHome"  resultType="com.xzsd.app.clientHome.entity.ClientHomeInfo">
+        select
+            slideshow_path slideshowPath,
+            goods_id goodsId
+        from t_info_slideshow_home
+        where is_deleted = 0
+        and slideshow_state_id = 1
+        and start_time &lt;= now()
+        and end_time &gt;= now()
+        order by slideshow_num asc
+    </select>
+
+</mapper>

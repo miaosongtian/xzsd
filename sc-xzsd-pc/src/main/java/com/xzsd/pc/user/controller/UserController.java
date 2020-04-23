@@ -94,7 +94,7 @@ public class UserController {
      * @author miaosongtian
      * @Date 2020-03-26
      */
-    @RequestMapping(value = "findUserById")
+    @RequestMapping(value = "getUser")
     public AppResponse findUserById(String userId) {
         try {
             return userService.findUserById(userId);

@@ -86,7 +86,7 @@
         <if test="goodsId != null and goodsId != ''">
             and a.goods_id like concat('%', #{goodsId}, '%')
         </if>
-        order by create_time desc
+        order by a.create_time desc
     </select>
 
     <!--分页查询轮播图列表-->
@@ -104,7 +104,7 @@
         <if test="slideshowId != null and slideshowId != ''">
             and a.slideshow_id like concat('%', #{slideshowId}, '%')
         </if>
-        order by create_time desc
+        order by slideshow_num asc
     </select>
 
     <update id="updateSlideshowHomeState" parameterType="java.util.List">

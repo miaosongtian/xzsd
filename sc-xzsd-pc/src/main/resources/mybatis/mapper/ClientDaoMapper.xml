@@ -4,35 +4,36 @@
     <!--分页查询客户信息列表（管理员）-->
     <select id="listClients" parameterType="com.xzsd.pc.client.entity.ClientInfo" resultType="com.xzsd.pc.client.entity.ClientInfo">
         select
-            a.client_account userAcct,
-            a.client_name userName,
+            a.user_acct userAcct,
+            a.user_name userName,
             a.sex sex,
             a.phone phone,
-            a.e_mail mail,
-            a.id_card_number idCard,
-            a.client_code userId
-        from t_client_command a
+            a.email mail,
+            a.id_card idCard,
+            a.user_code userId
+        from t_sys_user a
         where a.is_deleted = 0
+        and a.role = 4
         <if test="userName != null and userName != ''">
-            and a.client_name like concat('%', #{userName}, '%')
+            and a.user_name like concat('%', #{userName}, '%')
         </if>
         <if test="userAcct != null and userAcct != ''">
-            and a.client_account like concat('%', #{userAcct}, '%')
+            and a.user_acct like concat('%', #{userAcct}, '%')
         </if>
-        order by a.create_time desc
+        order by a.gmt_create desc
     </select>
 
     <!--分页查询客户信息列表（店长）-->
     <select id="listClientRole2" parameterType="com.xzsd.pc.client.entity.ClientInfo" resultType="com.xzsd.pc.client.entity.ClientInfo">
         select
-            a.client_account userAcct,
-            a.client_name userName,
+            a.user_acct userAcct,
+            a.user_name userName,
             a.sex sex,
             a.phone phone,
-            a.e_mail mail,
-            a.id_card_number idCard,
-            a.client_code userId
-        from t_client_command a
+            a.email mail,
+            a.id_card idCard,
+            a.user_code userId
+        from t_sys_user a
         where a.is_deleted = 0
         and invite_num in (
           select
@@ -43,11 +44,11 @@
             user_id = #{createBy}
         )
         <if test="userName != null and userName != ''">
-            and a.client_name like concat('%', #{userName}, '%')
+            and a.user_name like concat('%', #{userName}, '%')
         </if>
         <if test="userAcct != null and userAcct != ''">
-            and a.client_account like concat('%', #{userAcct}, '%')
+            and a.user_acct like concat('%', #{userAcct}, '%')
         </if>
-        order by a.create_time desc
+        order by a.gmt_create desc
     </select>
 </mapper>

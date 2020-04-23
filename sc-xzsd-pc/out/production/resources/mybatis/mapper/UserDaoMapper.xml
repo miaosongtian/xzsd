@@ -15,39 +15,39 @@
     <!--新增用户-->
     <insert id="addUser" parameterType="com.xzsd.pc.user.entity.UserInfo">
         insert into t_sys_user
-        (user_code,
-        user_name,
-        user_acct,
-        user_pwd,
-        id_card,
-        sex,
-        phone,
-        email,
-        remark,
-        is_deleted,
-        sort_no,
-        gmt_create,
-        create_by,
-        gmt_modified,
-        last_modified_by,
-        version)
+            (user_code,
+            user_name,
+            user_acct,
+            user_pwd,
+            id_card,
+            sex,
+            role,
+            phone,
+            email,
+            user_image,
+            is_deleted,
+            gmt_create,
+            create_by,
+            gmt_modified,
+            last_modified_by,
+            version)
         values
-        (#{userId},
-        #{userName},
-        #{userAcct},
-        #{userPassword},
-        #{idCard},
-        #{sex},
-        #{phone},
-        #{mail},
-        #{remark},
-        #{isDeleted},
-        0,
-        now(),
-        #{createBy},
-        now(),
-        #{lastModifiedBy},
-        0)
+            (#{userId},
+            #{userName},
+            #{userAcct},
+            #{userPassword},
+            #{idCard},
+            #{sex},
+            #{role},
+            #{phone},
+            #{mail},
+            #{imagePath},
+            0,
+            now(),
+            #{createBy},
+            now(),
+            #{lastModifiedBy},
+            0)
     </insert>
 
     <!--修改用户信息-->
@@ -60,7 +60,9 @@
             sex          = #{sex},
             phone        = #{phone},
             email        = #{mail},
-            remark       = #{remark},
+            user_image   = #{imagePath},
+            user_pwd     = #{userPassword},
+            role         = #{role},
             gmt_modified = now(),
             last_modified_by   = #{lastModifiedBy},
             version      = version + 1
@@ -72,15 +74,14 @@
     <update id="deleteUser" parameterType="com.xzsd.pc.user.entity.UserInfo">
         update t_sys_user
         set
-        is_deleted = 1,
-        gmt_modified = now(),
-        last_modified_by   = #{userCode},
-        version = version + 1
+            is_deleted = 1,
+            gmt_modified = now(),
+            last_modified_by = #{userCode},
+            version = version + 1
         where user_code in
         <foreach item="userId" index="index" collection="listId" open="(" separator="," close=")">
             #{userId}
         </foreach>
-        and version = #{version}
     </update>
 
     <!--获取用户信息-->
@@ -89,12 +90,13 @@
             user_code userId,
             user_name userName,
             user_acct userAcct,
+            user_image userImage,
             user_pwd userPassword,
             id_card idCard,
+            role role,
             sex sex,
             phone phone,
             email mail,
-            remark remark,
             version version
         from t_sys_user
         where user_code = #{userId}
@@ -107,18 +109,11 @@
         a.user_code userId,
         a.user_name userName,
         a.user_acct userAcct,
-        a.user_pwd userPassword,
         a.id_card idCard,
         a.sex sex,
-        a.phone,
-        a.email,
-        a.remark,
-        a.is_deleted,
-        a.sort_no,
-        a.gmt_create,
-        a.create_by,
-        a.gmt_modified,
-        a.last_modified_by,
+        a.phone phone,
+        a.role role,
+        a.email mail,
         a.version
         from t_sys_user a
         where a.is_deleted = 0
@@ -128,6 +123,9 @@
         <if test="userName != null and userName != ''">
             and a.user_name like concat('%', #{userName}, '%')
         </if>
-        order by gmt_create desc
+        <if test="role != null and role != ''">
+            and a.role like concat('%', #{role}, '%')
+        </if>
+        order by a.gmt_create desc
     </select>
 </mapper>

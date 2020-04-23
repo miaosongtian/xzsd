@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.pc.menu.dao.MenuDao">
+    <!--新增商品-->
+    <insert id="addMenu" parameterType="com.xzsd.pc.menu.entity.MenuInfo">
+        insert into t_sys_menu
+        (
+            menu_id,
+            menu_name,
+            menu_path,
+            menu_comment,
+            is_deleted,
+            create_time,
+            create_user,
+            update_time,
+            update_user,
+            version)
+        values
+            (#{menuId},
+            #{menuName},
+            #{menuPath},
+            #{menuComment},
+            0,
+            now(),
+            #{createBy},
+            now(),
+            #{lastModifiedBy},
+            0)
+    </insert>
+
+    <!--删除菜单-->
+    <update id="deleteMenu" parameterType="java.lang.String">
+        update t_sys_menu
+        set
+            is_deleted = 1,
+            update_time = now(),
+            update_user   = #{userId},
+            version = version + 1
+        where menu_id = #{menuId}
+    </update>
+
+    <!--修改菜单-->
+    <update id="updateMenu" parameterType="com.xzsd.pc.menu.entity.MenuInfo">
+        update t_sys_menu
+        set
+            menu_name         = #{menuName},
+            menu_path         = #{menuPath},
+            menu_comment      = #{menuComment},
+            update_time       = now(),
+            update_user       = #{lastModifiedBy},
+            version           = version + 1
+        where menu_id = #{menuId}
+        and version = #{version}
+    </update>
+
+    <!--查询菜单详情-->
+    <select id="getMenu" parameterType="java.lang.String" resultType="com.xzsd.pc.menu.entity.MenuInfo">
+        select
+            menu_id menuId,
+            menu_name menuName,
+            menu_path menuPath,
+            menu_comment menuComment,
+            version
+        from t_sys_menu
+        where menu_id = #{menuId}
+        and is_deleted = 0
+    </select>
+
+    <!--查询菜单列表映射-->
+    <resultMap id="menuList" type="com.xzsd.pc.menu.entity.MenuInfo">
+        <id column="menu_id" property="menuId" jdbcType="VARCHAR"/>
+        <result column="menu_name" property="menuName" jdbcType="VARCHAR"/>
+        <result column="menu_path" property="menuPath" jdbcType="VARCHAR"/>
+        <result column="version" property="version" jdbcType="VARCHAR"/>
+    </resultMap>
+    <!--查询商品分类列表（查全部）-->
+    <select id="listMenu" resultMap="menuList">
+        select
+            a.menu_id,
+            a.menu_name,
+            a.version
+        from t_sys_menu a
+        where a.is_deleted = 0
+        order by a.create_time desc
+    </select>
+
+    <!--查询商品分类列表（根据角色查）-->
+    <select id="listMenuHome" parameterType="java.lang.String" resultMap="menuList">
+        select
+            a.menu_id,
+            a.menu_name,
+            a.menu_path
+        from t_sys_menu a
+        where a.is_deleted = 0
+        and a.menu_id in ('2020042017250468782','2020042017253506989','2020042017272381188','2020042017283329858')
+        order by a.create_time desc
+    </select>
+</mapper>
