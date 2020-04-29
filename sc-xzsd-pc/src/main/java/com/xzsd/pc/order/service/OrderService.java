@@ -7,6 +7,7 @@ import com.xzsd.pc.order.dao.OrderDao;
 import com.xzsd.pc.order.entity.OrderDetalil;
 import com.xzsd.pc.order.entity.OrderInfo;
 import com.xzsd.pc.order.entity.OrderState;
+import com.xzsd.pc.order.entity.OrderVO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,12 +49,13 @@ public class OrderService {
      * time:2020-04-16
      */
     public AppResponse getListOrder(String orderId){
-        OrderDetalil orderDetalil = orderDao.getListOrder(orderId);
-        return AppResponse.success("查询成功！",orderDetalil);
+        OrderVO orderDeepenList = new OrderVO();
+        orderDeepenList.setOrderDeepenList(orderDao.getListOrder(orderId));
+        return AppResponse.success("查询成功！",orderDeepenList);
     }
 
     /**
-     * 修改商品状态
+     * 修改订单状态
      * author:miaosongtian
      * time:2020-04-14
      */

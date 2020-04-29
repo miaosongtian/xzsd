@@ -92,7 +92,9 @@
             a.menu_path
         from t_sys_menu a
         where a.is_deleted = 0
-        and a.menu_id in ('2020042017250468782','2020042017253506989','2020042017272381188','2020042017283329858')
+        <if test="role == 2">
+            and a.menu_id in ('2020042017250468782','2020042017253506989','2020042017272381188','2020042017283329858')
+        </if>
         order by a.create_time asc
     </select>
 </mapper>

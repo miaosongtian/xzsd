@@ -132,8 +132,8 @@
             a.goods_original_cost goodsOriginalCost,
             a.goods_price goodsPrice,
             a.goods_sales goodsSales,
-            a.one_classify_name oneClassifyName,
-            a.two_classify_name twoClassifyName,
+            b.classify_name oneClassifyName,
+            c.classify_name twoClassifyName,
             a.goods_advertise goodsAdvertise,
             a.goods_describe goodsDescribe,
             a.goods_state_id goodsStateId,
@@ -146,6 +146,10 @@
             a.goods_id goodsId,
             a.version
         from t_info_goods a
+        left join (t_info_goods_classify b
+            left join t_info_goods_classify c
+            on c.classify_parent = b.classify_id)
+        on a.two_classify_id = c.classify_id
         where a.is_deleted = 0
         <if test="goodsName != null and goodsName != ''">
             and a.goods_name like concat('%', #{goodsName}, '%')
@@ -162,7 +166,7 @@
         <if test="goodsAuthor != null and goodsAuthor != ''">
             and a.goods_author like concat('%', #{goodsAuthor}, '%')
         </if>
-        order by create_time desc
+        order by a.create_time desc
     </select>
 
     <!--MQ练习-->

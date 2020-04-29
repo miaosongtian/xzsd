@@ -5,7 +5,7 @@
     <!--查询订单详情信息-->
     <select id="getListOrder" parameterType="java.lang.String" resultType="com.xzsd.pc.order.entity.OrderDetalil">
         select
-            user_id userId,
+            create_user userId,
             order_id orderId,
             goods_id goodsId,
             goods_name goodsName,
@@ -24,11 +24,13 @@
             a.order_all_cost orderAllCost,
             a.order_state orderStateId,
             a.store_id storeId,
-            a.user_name userName,
-            a.phone phone,
-            a.pay_time payTime,
+            b.user_name userName,
+            b.phone phone,
+            a.create_time payTime,
             a.version
         from t_info_order a
+        left join t_sys_user b
+        on a.create_user = b.user_code
         where a.is_deleted = 0
         <if test="userName != null and userName != ''">
             and a.user_name like concat('%', #{userName}, '%')
@@ -58,11 +60,13 @@
             a.order_all_cost orderAllCost,
             a.order_state orderStateId,
             a.store_id storeId,
-            a.user_name userName,
-            a.phone phone,
-            a.pay_time payTime,
+            b.user_name userName,
+            b.phone phone,
+            a.create_time payTime,
             a.version
         from t_info_order a
+        left join t_sys_user b
+        on a.create_user = b.user_code
         where a.is_deleted = 0
         and a.store_id in (
             select

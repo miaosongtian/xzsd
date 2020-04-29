@@ -11,4 +11,8 @@ public interface ClientHomeDao {
      * 查询首页轮播图
      */
     List<ClientHomeInfo> listRotationCharHome();
+    /**
+     * 查询热门商品
+     */
+    List<ClientHomeInfo> listHotGoods();
 }

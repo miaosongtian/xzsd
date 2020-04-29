@@ -27,7 +27,7 @@ public interface StoreDao {
     /**
      * 查询门店列表（店长）
      */
-    StoreInfo listStoresRole2(StoreInfo storeInfo);
+    List<StoreInfo> listStoresRole2(StoreInfo storeInfo);
     /**
      * 查询门店详情
      */

@@ -2,31 +2,28 @@ package com.xzsd.pc.goodsClassify.service;
 
 
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+
 import com.neusoft.core.restful.AppResponse;
 import com.neusoft.util.StringUtil;
 
 import com.xzsd.pc.goodsClassify.dao.GoodsClassifyDao;
 import com.xzsd.pc.goodsClassify.entity.GoodsClassifyInfo;
+import com.xzsd.pc.goodsClassify.entity.GoodsClassifyVo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @Service
 public class GoodsClassifyService {
     @Resource
     private GoodsClassifyDao goodsClassifyDao;
+
     /**
      * 新增商品分类
      * auother:miaosongtian
      * time:2020-4-9
      */
-
     @Transactional(rollbackFor = Exception.class)
     public AppResponse addGoodsClassify(GoodsClassifyInfo goodsClassifyInfo){
         goodsClassifyInfo.setClassifyId(StringUtil.getCommonCode(2));
@@ -45,7 +42,6 @@ public class GoodsClassifyService {
      */
     @Transactional(rollbackFor = Exception.class)
     public AppResponse deleteGoodsClassify(String classifyId,String userId) {
-//        List<String> listId = Arrays.asList(goodsId.split(","));
         AppResponse appResponse = AppResponse.success("删除成功！");
         int count = goodsClassifyDao.deleteGoodsClassify(classifyId,userId);
         if(0 == count) {
@@ -77,6 +73,9 @@ public class GoodsClassifyService {
      */
     public AppResponse getGoodsClassify(String classifyId){
         GoodsClassifyInfo goodsClassifyInfo = goodsClassifyDao.getGoodsClassify(classifyId);
+        if (goodsClassifyInfo == null){
+            return AppResponse.success("详情查询失败，请重试！");
+        }
         return AppResponse.success("查询成功！",goodsClassifyInfo);
     }
 
@@ -86,7 +85,8 @@ public class GoodsClassifyService {
      * time:2020-04-9
      */
     public AppResponse listAllGoodsClassify() {
-        List<GoodsClassifyInfo> oneClassifyList = goodsClassifyDao.listAllGoodsClassify();
+        GoodsClassifyVo oneClassifyList = new GoodsClassifyVo();
+        oneClassifyList.setOneClassifyList(goodsClassifyDao.listAllGoodsClassify());
         return AppResponse.success("查询成功！",oneClassifyList);
     }
 }

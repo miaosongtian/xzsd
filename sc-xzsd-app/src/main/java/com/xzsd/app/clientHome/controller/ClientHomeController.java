@@ -32,4 +32,20 @@ public class ClientHomeController {
             throw e;
         }
     }
+
+    /**
+     * 查询热门商品
+     * author:miaosongtian
+     * time:2020-4-24
+     */
+    @PostMapping("listHotGoods")
+    public AppResponse listHotGoods() {
+        try {
+            return clientHomeService.listHotGoods();
+        } catch (Exception e) {
+            logger.error("热门商品查询错误", e);
+            System.out.println(e.toString());
+            throw e;
+        }
+    }
 }

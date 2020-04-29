@@ -14,51 +14,20 @@
         order by slideshow_num asc
     </select>
 
-    <!--统计门店邀请码数量-->
-    <select id="countInviteCode" parameterType="com.xzsd.app.register.entity.RegisterInfo" resultType="int">
-        select count(invite_code)
-        from t_info_store
-        where is_deleted = 0
-        and invite_code = #{inviteCode}
+    <!--查询热门商品-->
+    <select id="listHotGoods"  resultType="com.xzsd.app.clientHome.entity.ClientHomeInfo">
+        select
+            b.goods_name goodsName,
+            a.goods_id goodsId,
+            b.goods_image_path goodsImagePath,
+            b.goods_price goodsPrice
+        from t_info_hot_goods a
+        left join t_info_goods b
+        on a.goods_id = b.goods_id
+        where a.is_deleted = 0
+        and b.goods_state_id = 1
+        and a.start_time &lt;= now()
+        and a.end_time &gt;= now()
+        order by a.hot_goods_num asc
     </select>
-
-    <!--注册客户-->
-    <insert id="clientRegister" parameterType="com.xzsd.app.register.entity.RegisterInfo">
-        insert into t_sys_user
-            (user_code,
-            user_name,
-            user_acct,
-            user_pwd,
-            id_card,
-            sex,
-            role,
-            phone,
-            email,
-            invite_num,
-            user_image,
-            is_deleted,
-            gmt_create,
-            create_by,
-            gmt_modified,
-            last_modified_by,
-            version)
-        values
-            (#{userId},
-            #{userName},
-            #{userAcct},
-            #{userPassword},
-            #{idCard},
-            #{sex},
-            4,
-            #{phone},
-            #{mail},
-            #{inviteCode},
-            #{imagePath},
-            0,
-            now(),
-            #{createBy},
-            now(),
-            #{lastModifiedBy},
-            0)
-    </insert>
 </mapper>

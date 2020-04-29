@@ -5,7 +5,7 @@ import com.neusoft.util.UUIDUtils;
 import com.qcloud.cos.COSClient;
 import com.qcloud.cos.model.PutObjectRequest;
 import com.qcloud.cos.model.PutObjectResult;
-
+import com.xzsd.app.imageUpload.entity.UrlInfo;
 import com.xzsd.app.utils.TencentUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +28,8 @@ public class ImageUploadController {
     // 原因：不能用new工具类的方式，应该是用容器注册（@Autowried）的方式使用此工具类，就能得到配置文件里的值
     @Autowired
     private TencentUtil tencentUtil;//不能通过new来调用
+//    @Resource
+//    private ImageUploadService imageUploadService;
 
 
     /**
@@ -59,6 +61,9 @@ public class ImageUploadController {
         PutObjectResult putObjectResult = cosClient.putObject(putObjectRequest);
         Map<String,String> map = new HashMap<>();
         map.put("url",tencentUtil.getPath()+key);
-        return  AppResponse.success(null,map);
+        UrlInfo imagePath = new UrlInfo();
+        imagePath.setImagePath(map.get("url"));
+//        imageUploadService.setUrl(map.get("url"));
+        return  AppResponse.success("图片上传成功",imagePath);
     }
 }

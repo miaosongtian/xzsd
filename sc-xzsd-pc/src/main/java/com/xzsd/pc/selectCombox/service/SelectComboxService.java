@@ -2,6 +2,7 @@ package com.xzsd.pc.selectCombox.service;
 
 import com.neusoft.core.restful.AppResponse;
 import com.xzsd.pc.selectCombox.dao.SelectComboxDao;
+import com.xzsd.pc.selectCombox.entity.AreaInfo;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
@@ -17,7 +18,11 @@ public class SelectComboxService {
      * time:2020-4-17
      */
     public AppResponse listArea(String areaId) {
-        List<String> areaList = selectComboxDao.listArea(areaId);
+        AreaInfo areaList = new AreaInfo();
+        areaList.setAreaList(selectComboxDao.listArea(areaId));
+        if (areaList == null){
+            return AppResponse.success("查询数据为空，请重试！");
+        }
         return AppResponse.success("查询成功！", areaList);
     }
 }

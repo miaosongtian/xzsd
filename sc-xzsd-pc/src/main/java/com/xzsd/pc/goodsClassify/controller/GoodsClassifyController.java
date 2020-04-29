@@ -29,8 +29,8 @@ public class GoodsClassifyController {
      * author:miaosongtian
      * time:2020-04-9
      */
-    @PostMapping("addGoodsClassfy")
-    public AppResponse addGoodsClassfy(GoodsClassifyInfo goodsClassifyInfo) {
+    @PostMapping("addGoodsClassify")
+    public AppResponse addGoodsClassify(GoodsClassifyInfo goodsClassifyInfo) {
         try {
             //获取用户id
             String userId =  SecurityUtils.getCurrentUserId();

@@ -38,7 +38,7 @@ public class UserInfo {
     /**
      * 性别
      */
-    private int sex;
+    private String sex;
     /**
      * 手机号码
      */
@@ -152,11 +152,11 @@ public class UserInfo {
         this.idCard = idCard;
     }
 
-    public int getSex() {
+    public String getSex() {
         return sex;
     }
 
-    public void setSex(int sex) {
+    public void setSex(String sex) {
         this.sex = sex;
     }
 

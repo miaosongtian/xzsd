@@ -19,9 +19,9 @@ public interface OrderDao {
      */
     List<OrderInfo> listOrdersRole2(OrderInfo orderInfo);
     /**
-     * 查询商品详情
+     * 查询订单商品详情
      */
-    OrderDetalil getListOrder(@Param("orderId") String orderId);
+    List<OrderDetalil> getListOrder(@Param("orderId") String orderId);
     /**
      * 修改商品状态
      */

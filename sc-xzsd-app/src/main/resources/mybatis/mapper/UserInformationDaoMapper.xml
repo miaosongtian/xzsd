@@ -37,7 +37,7 @@
             a.version version
         from t_sys_user a
         left join t_info_store b
-        on a.user_code = b.user_id
+        on a.invite_num = b.invite_code
         where a.user_code = #{userCode}
         and a.is_deleted = 0
     </select>

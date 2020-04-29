@@ -8,6 +8,7 @@ import com.neusoft.core.restful.AppResponse;
 import com.neusoft.util.StringUtil;
 import com.xzsd.pc.goods.dao.GoodsDao;
 import com.xzsd.pc.goods.entity.Goods;
+import com.xzsd.pc.goods.entity.GoodsClassifyVO;
 import com.xzsd.pc.goods.entity.GoodsInfo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -108,7 +109,11 @@ public class GoodsService {
      * time:2020-4-9
      */
     public AppResponse listGoodsClassify(String classifyId) {
-        List<String> goodsClassifyList = goodsDao.listGoodsClassify(classifyId);
+        GoodsClassifyVO goodsClassifyList = new GoodsClassifyVO();
+        goodsClassifyList.setGoodsClassifyList(goodsDao.listGoodsClassify(classifyId));
+        if (goodsClassifyList == null) {
+            return AppResponse.success("查询数据为空，请重试！");
+        }
         return AppResponse.success("查询成功！", goodsClassifyList);
     }
 
@@ -122,7 +127,7 @@ public class GoodsService {
         //把字符串通过逗号分成list
         List<String> listGoodsId = Arrays.asList(goodsInfo.getGoodsId().split(","));
         List<String> listVersion = Arrays.asList(goodsInfo.getVersion().split(","));
-        //定义一个变量用于存放listId,listVersion
+        //定义一个变量用于存放listGoodsId,listVersion
         List<Goods> listUpdata = new ArrayList<>();
         String goodsStateId = goodsInfo.getGoodsStateId();
         String userCode = goodsInfo.getLastModifiedBy();

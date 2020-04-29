@@ -38,7 +38,7 @@ public class OrderInfo {
     /**
      * 确认付款时间（下单时间）
      */
-    private Date payTime;
+    private String payTime;
     /**
      * 付款时间（开始）
      */
@@ -148,11 +148,11 @@ public class OrderInfo {
         this.phone = phone;
     }
 
-    public Date getPayTime() {
+    public String getPayTime() {
         return payTime;
     }
 
-    public void setPayTime(Date payTime) {
+    public void setPayTime(String payTime) {
         this.payTime = payTime;
     }
 

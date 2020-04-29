@@ -6,6 +6,7 @@ import com.neusoft.core.restful.AppResponse;
 import com.neusoft.util.StringUtil;
 import com.xzsd.pc.store.dao.StoreDao;
 import com.xzsd.pc.store.entity.StoreInfo;
+import com.xzsd.pc.store.entity.StoreVO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
@@ -77,8 +78,9 @@ public class StoreService {
             PageInfo<StoreInfo> pageData = new PageInfo<StoreInfo>(storeInfoList);
              return AppResponse.success("查询成功！", pageData);
         }else if (storeInfo.getRole().equals("2")){
-            StoreInfo storeInfoRole2 = storeDao.listStoresRole2(storeInfo);
-            return AppResponse.success("查询成功！", storeInfoRole2);
+            StoreVO storeVO = new StoreVO();
+            storeVO.setList(storeDao.listStoresRole2(storeInfo));
+            return AppResponse.success("查询成功！",storeVO );
         }else return AppResponse.success("角色异常！");
     }
 

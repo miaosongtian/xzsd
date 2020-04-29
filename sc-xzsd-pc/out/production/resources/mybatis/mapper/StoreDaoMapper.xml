@@ -27,7 +27,6 @@
             (
             store_id,
             user_id,
-            driver_id,
             store_name,
             phone,
             business_code,
@@ -46,7 +45,6 @@
             (
             #{storeId},
             #{userId},
-            #{driverId},
             #{storeName},
             #{phone},
             #{businessCode},

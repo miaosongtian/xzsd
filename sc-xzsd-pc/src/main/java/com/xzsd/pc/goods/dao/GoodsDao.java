@@ -46,7 +46,7 @@ public interface GoodsDao {
     /**
      * 查询商品分类下拉框
      */
-    List<String> listGoodsClassify(@Param("classifyId") String classifyId);
+    List<GoodsInfo> listGoodsClassify(@Param("classifyId") String classifyId);
     /**
      * 修改商品状态
      */

@@ -4,6 +4,7 @@ import com.neusoft.core.restful.AppResponse;
 import com.neusoft.util.StringUtil;
 import com.xzsd.pc.menu.dao.MenuDao;
 import com.xzsd.pc.menu.entity.MenuInfo;
+import com.xzsd.pc.menu.entity.MenuList;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,7 +70,8 @@ public class MenuService {
      * time:2020-04-20
      */
     public AppResponse listMenu() {
-        List<MenuInfo> menuList = menuDao.listMenu();
+        MenuList menuList = new MenuList();
+        menuList.setMenuList(menuDao.listMenu());
         return AppResponse.success("查询成功！",menuList);
     }
 
@@ -79,15 +81,9 @@ public class MenuService {
      * time:2020-04-20
      */
     public AppResponse listMenuHome(String role) {
-        //角色为1/0查询全部菜单，角色为2查询店长菜单
-        if (role.equals("2")){
-            List<MenuInfo> menuList = menuDao.listMenuHome(role);
-            return AppResponse.success("查询成功！",menuList);
-        }else if (role.equals("1") || role.equals("0")){
-            List<MenuInfo> menuList = menuDao.listMenu();
-            return AppResponse.success("查询成功！",menuList);
-        } else return AppResponse.success("角色没有权限！");
-
+        MenuList menuList = new MenuList();
+        menuList.setMenuList(menuDao.listMenuHome(role));
+        return AppResponse.success("查询成功！",menuList);
     }
 
     /**

@@ -3,6 +3,7 @@ package com.xzsd.pc.goodsClassify.dao;
 
 
 import com.xzsd.pc.goodsClassify.entity.GoodsClassifyInfo;
+import com.xzsd.pc.goodsClassify.entity.GoodsClassifyVo1;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -35,13 +36,5 @@ public interface GoodsClassifyDao {
     /**
      * 查询商品分类列表
      */
-    List<GoodsClassifyInfo> listAllGoodsClassify();
-//    /**
-//     * MQ练习
-//     */
-//    void mqGoods(GoodsInfo goodsInfo);
-//    /**
-//     * 查询商品分类下拉框
-//     */
-//    List<String> listGoodsClassify(@Param("classfyId") String classfyId) ;
+    List<GoodsClassifyVo1> listAllGoodsClassify();
 }

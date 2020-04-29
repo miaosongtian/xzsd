@@ -28,8 +28,8 @@ public class OrderController {
     public AppResponse listOrders(OrderInfo orderInfo){
         try {
             //获取当前登录用户id
-//            String userCode = SecurityUtils.getCurrentUserId();
-//            orderInfo.setLastModifiedBy(userCode);
+            String userCode = SecurityUtils.getCurrentUserId();
+            orderInfo.setCreateBy(userCode);
             return orderServoce.listOrders(orderInfo);
         } catch (Exception e) {
             logger.error("查询订单列表异常", e);

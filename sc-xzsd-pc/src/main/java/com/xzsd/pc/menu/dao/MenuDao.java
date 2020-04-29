@@ -1,6 +1,7 @@
 package com.xzsd.pc.menu.dao;
 
 import com.xzsd.pc.menu.entity.MenuInfo;
+import com.xzsd.pc.menu.entity.MenuList;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
