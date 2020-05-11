@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.app.userInformation.dao.UserInformationDao">
+    <!--修改用户密码-->
+    <update id="updateUserPassword" parameterType="com.xzsd.app.userInformation.entity.UpdatePassword">
+        update t_sys_user
+        set
+            user_pwd     = #{userNewPassword},
+            gmt_modified = now(),
+            last_modified_by = #{userCode},
+            version      = version + 1
+        where user_code = #{userCode}
+        and version = #{version}
+    </update>
+
+    <!--获取加密密码-->
+    <select id="findPwd" parameterType="java.lang.String" resultType="java.lang.String">
+        select
+            a.user_pwd
+        from t_sys_user a
+        where a.user_code = #{userCode}
+        and a.is_deleted = 0
+    </select>
+
+    <!--获取用户角色-->
+    <select id="getRole" parameterType="java.lang.String" resultType="java.lang.String">
+        select
+            a.role
+        from t_sys_user a
+        where a.user_code = #{userCode}
+        and a.is_deleted = 0
+    </select>
+
+    <!--获取用户个人信息（4客户或3司机）-->
+    <select id="getUser4Or3" parameterType="java.lang.String" resultType="com.xzsd.app.userInformation.entity.UserInformationInfo">
+        select
+            a.user_image userImage,
+            a.user_name userName,
+            b.store_id storeId,
+            b.store_name storeName,
+            a.role role,
+            a.phone phone,
+            c.area_name provinceName,
+            d.area_name cityName,
+            e.area_name areaName,
+            b.address address,
+            a.user_name driverName,
+            a.version version
+        from
+            (t_sys_user a
+            left join t_info_store b
+            on a.invite_num = b.invite_code)
+        left join
+            ((t_info_area_level c
+			left join t_info_area_level d
+			on d.parent_id = c.area_id)
+            left join t_info_area_level e
+			on d.area_id = e.parent_id)
+		on b.area_id = e.area_id
+        where a.user_code = #{userCode}
+        and a.is_deleted = 0
+    </select>
+
+    <!--获取用户个人信息-->
+    <select id="getUser2" parameterType="java.lang.String" resultType="com.xzsd.app.userInformation.entity.UserInformationInfo">
+        select
+            a.user_image userImage,
+            a.user_name userName,
+            c.store_id storeId,
+            c.store_name storeName,
+            c.invite_code inviteCode,
+            a.role role,
+            a.phone phone,
+            b.area_name provinceName,
+            d.area_name cityName,
+            e.area_name areaName,
+            c.address address,
+            a.version version
+        from
+            (t_sys_user a
+            left join t_info_store c
+            on a.user_code = c.user_id)
+        left join
+            ((t_info_area_level b
+			left join t_info_area_level d
+			on d.parent_id = b.area_id)
+            left join t_info_area_level e
+			on d.area_id = e.parent_id)
+		on c.area_id = e.area_id
+        where a.user_code = #{userCode}
+        and a.is_deleted = 0
+        and c.is_deleted = 0
+    </select>
+</mapper>

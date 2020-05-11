@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.pc.goods.dao.GoodsDao">
+    <!--统计商品书号数量-->
+    <select id="countIsbn" parameterType="com.xzsd.pc.goods.entity.GoodsInfo" resultType="int">
+        select count(isbn)
+        from t_info_goods
+        where is_deleted = 0
+        and isbn = #{isbn}
+        <if test="goodsId != null and goodsId != ''">
+            and goods_id != #{goodsId}
+        </if>
+    </select>
+
+    <!--统计商品存在于热门商品的数量-->
+    <select id="countHotGoods" parameterType="java.util.List" resultType="int">
+        select count(goods_id)
+        from t_info_hot_goods
+        where is_deleted = 0
+        and goods_id in
+        <foreach item="goodsId" index="index" collection="listId" open="(" separator="," close=")">
+            #{goodsId}
+        </foreach>
+    </select>
+
+    <!--统计商品存在于轮播图的数量-->
+    <select id="countSlideshow" parameterType="java.util.List" resultType="int">
+        select count(goods_id)
+        from t_info_slideshow_home
+        where is_deleted = 0
+        and goods_id in
+        <foreach item="goodsId" index="index" collection="listId" open="(" separator="," close=")">
+            #{goodsId}
+        </foreach>
+    </select>
+
+    <!--新增商品-->
+    <insert id="addGoods" parameterType="com.xzsd.pc.goods.entity.GoodsInfo">
+        insert into t_info_goods
+            (goods_id,
+            isbn,
+            goods_name,
+            one_classify_id,
+            two_classify_id,
+            goods_describe,
+            supplier_name,
+            goods_inventory,
+            goods_original_cost,
+            goods_price,
+            goods_advertise,
+            goods_evaluate_score,
+            goods_image_path,
+            goods_shelf_time,
+            goods_state_id,
+            goods_views_num,
+            goods_sales,
+            goods_author,
+            goods_press,
+            is_deleted,
+            create_time,
+            create_user,
+            update_time,
+            update_user,
+            version)
+        values
+            (#{goodsId},
+            #{isbn},
+            #{goodsName},
+            #{oneClassifyId},
+            #{twoClassifyId},
+            #{goodsDescribe},
+            #{supplierName},
+            #{goodsInventory},
+            #{goodsOriginalCost},
+            #{goodsPrice},
+            #{goodsAdvertise},
+            '0.0',
+            #{imagePath},
+            #{goodsShelfTime},
+            3,
+            0,
+            0,
+            #{goodsAuthor},
+            #{goodsPress},
+            0,
+            now(),
+            #{createBy},
+            now(),
+            #{lastModifiedBy},
+            0)
+    </insert>
+
+    <!--删除商品-->
+    <update id="deleteGoods" parameterType="com.xzsd.pc.goods.entity.GoodsInfo">
+        update t_info_goods
+        set
+            is_deleted = 1,
+            update_time = now(),
+            update_user   = #{userCode},
+            version = version + 1
+        where goods_id in
+        <foreach item="goodsId" index="index" collection="listId" open="(" separator="," close=")">
+            #{goodsId}
+        </foreach>
+    </update>
+
+    <!--修改商品-->
+    <update id="updateGoods" parameterType="com.xzsd.pc.goods.entity.GoodsInfo">
+        update t_info_goods
+        set
+            goods_name                    = #{goodsName},
+            goods_price                   = #{goodsPrice},
+            goods_sales                   = #{goodsSales},
+            goods_original_cost           = #{goodsOriginalCost},
+            goods_author                  = #{goodsAuthor},
+            one_classify_id               = #{oneClassifyId},
+            two_classify_id               = #{twoClassifyId},
+            goods_advertise               = #{goodsAdvertise},
+            goods_press                   = #{goodsPress},
+            goods_describe                = #{goodsDescribe},
+            goods_state_id                = #{goodsStateId},
+            goods_inventory               = #{goodsInventory},
+            isbn                          = #{isbn},
+            update_time                   = now(),
+            update_user                   = #{lastModifiedBy},
+            version                       = version + 1
+        where goods_id = #{goodsId}
+        and version = #{version}
+    </update>
+
+    <!--查询商品信息-->
+    <select id="getGoods" parameterType="java.lang.String" resultType="com.xzsd.pc.goods.entity.GoodsInfo">
+        select
+            a.goods_name goodsName,
+            a.goods_price goodsPrice,
+            a.goods_original_cost goodsOriginalCost,
+            a.goods_author goodsAuthor,
+            a.one_classify_id oneClassifyId,
+            a.two_classify_id twoClassifyId,
+            b.classify_name oneClassifyName,
+            c.classify_name twoClassifyName,
+            a.goods_advertise goodsAdvertise,
+            a.goods_image_path goodsImagePath,
+            a.supplier_name supplierName,
+            a.goods_press goodsPress,
+            a.goods_describe goodsDescribe,
+            a.goods_id goodsId,
+            a.goods_inventory goodsInventory,
+            a.isbn isbn,
+            a.version
+        from t_info_goods a
+        left join (t_info_goods_classify b
+            left join t_info_goods_classify c
+            on c.classify_parent = b.classify_id)
+        on a.two_classify_id = c.classify_id
+        where a.goods_id = #{goodsId}
+        and a.is_deleted = 0
+    </select>
+
+    <!--分页查询商品列表-->
+    <select id="listGoods" parameterType="com.xzsd.pc.goods.entity.GoodsInfo" resultType="com.xzsd.pc.goods.entity.GoodsInfo">
+        select
+            a.goods_name goodsName,
+            a.goods_original_cost goodsOriginalCost,
+            a.goods_price goodsPrice,
+            a.goods_sales goodsSales,
+            a.goods_press goodsPress,
+            a.goods_author goodsAuthor,
+            b.classify_name oneClassifyName,
+            c.classify_name twoClassifyName,
+            a.goods_advertise goodsAdvertise,
+            a.goods_describe goodsDescribe,
+            a.goods_state_id goodsStateId,
+            a.goods_shelf_time goodsShelfTime,
+            a.goods_views_num goodsViewsNum,
+            a.supplier_name supplierName,
+            a.goods_image_path goodsImagePath,
+            a.goods_inventory goodsInventory,
+            a.isbn isbn,
+            a.goods_id goodsId,
+            a.version
+        from t_info_goods a
+        left join (t_info_goods_classify b
+            left join t_info_goods_classify c
+            on c.classify_parent = b.classify_id)
+        on a.two_classify_id = c.classify_id
+        where a.is_deleted = 0
+        <if test="goodsName != null and goodsName != ''">
+            and a.goods_name like concat('%', #{goodsName}, '%')
+        </if>
+        <if test="goodsStateId != null and goodsStateId != ''">
+            and a.goods_state_id like concat('%', #{goodsStateId}, '%')
+        </if>
+        <if test="goodsAdvertise != null and goodsAdvertise != ''">
+            and a.goods_advertise like concat('%', #{goodsAdvertise}, '%')
+        </if>
+        <if test="goodsPress != null and goodsPress != ''">
+            and a.goods_press like concat('%', #{goodsPress}, '%')
+        </if>
+        <if test="goodsAuthor != null and goodsAuthor != ''">
+            and a.goods_author like concat('%', #{goodsAuthor}, '%')
+        </if>
+        order by a.create_time desc
+    </select>
+
+    <!--MQ练习-->
+    <insert id="mqGoods" parameterType="com.xzsd.pc.goods.entity.GoodsInfo">
+        insert into MQtest
+        (
+        id,
+        create_time,
+        content
+        )
+        values
+        (
+        #{goodsId},
+        now(),
+        #{goodsName}
+        )
+    </insert>
+
+    <!--查询商品分类下拉框-->
+    <select id="listGoodsClassify" parameterType="java.lang.String" resultType="com.xzsd.pc.goodsClassify.entity.GoodsClassifyInfo">
+        select
+            a.classify_id classifyId,
+            a.classify_name classifyName
+        from t_info_goods_classify a
+        where a.is_deleted = 0
+        and a.classify_parent = #{classifyId}
+        order by create_time desc
+    </select>
+
+    <!--修改商品状态-->
+    <update id="updateGoodsShelfState" parameterType="java.util.List">
+        <foreach item="item" index="index" collection="listUpdata" open="" separator=";" close=";">
+            update t_info_goods
+            set
+                goods_state_id = #{item.goodsStateId},
+                update_time    = now(),
+                update_user    = #{item.userCode},
+                <if test="item.goodsStateId == 1">
+                    goods_shelf_time = now(),
+                </if>
+                version        = version + 1
+            where goods_id = #{item.goodsId}
+            and version = #{item.version}
+        </foreach>
+    </update>
+</mapper>

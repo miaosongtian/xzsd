@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.app.clientOrder.dao.ClientOrderDao">
+    <!--新增订单-->
+    <insert id="addOrderDetail" parameterType="java.util.List">
+            insert into t_info_order_deepen
+                (order_goods_id,
+                order_id,
+                goods_id,
+                goods_price,
+                goods_count,
+                is_deleted,
+                create_time,
+                create_user,
+                version)
+            values
+            <foreach collection="listGoodsAdd" item="item" index="index" separator=",">
+                    (#{item.orderDetailId},
+                    #{item.orderId},
+                    #{item.goodsId},
+                    #{item.goodsPrice},
+                    #{item.clientGoodsNum},
+                    0,
+                    now(),
+                    #{item.createBy},
+                    0)
+            </foreach>
+    </insert>
+
+    <!--新增订单-->
+    <insert id="addOrder" parameterType="com.xzsd.app.clientOrder.entity.ClientOrderInfo">
+        insert into t_info_order
+            (
+            order_id,
+            order_state,
+            store_id,
+            order_goods_num,
+            order_all_cost,
+            is_deleted,
+            create_time,
+            create_user,
+            update_time,
+            update_user,
+            version
+            )
+        values
+            (
+            #{orderId},
+            0,
+            #{storeId},
+            #{orderAllGoodsCount},
+            #{orderAllCost},
+            0,
+            now(),
+            #{createBy},
+            now(),
+            #{lastModifiedBy},
+            0
+            )
+    </insert>
+
+    <!--resultMap映射-->
+    <resultMap type="com.xzsd.app.clientOrder.entity.ClientOrderOutput" id="list">
+        <id property="orderId" column="orderId"/>
+        <result property="orderStateId" column="orderStateId"/>
+        <result property="orderAllCost" column="orderAllCost"/>
+        <result property="orderAllGoodsCount" column="orderAllGoodsCount"/>
+        <result property="storeName" column="storeName"/>
+        <result property="address" column="address"/>
+        <result property="crateTime" column="crateTime"/>
+        <result property="version" column="version"/>
+        <collection property="goodsList" ofType="com.xzsd.app.clientOrder.entity.GoodsList" select="selectList" column="orderId">
+            <id property="orderGoodsId" column="orderGoodsId"/>
+            <result property="goodsName" column="goodsName"/>
+            <result property="goodsImagePath" column="goodsImagePath"/>
+            <result property="goodsDescribe" column="goodsDescribe"/>
+            <result property="goodsPrice" column="goodsPrice"/>
+            <result property="cartGoodsCount" column="cartGoodsCount"/>
+            <result property="goodsId" column="goodsId"/>
+        </collection>
+    </resultMap>
+    <!--分页查询订单列表-->
+    <select id="listOrder" parameterType="com.xzsd.app.clientOrder.entity.ClientOrderInfo" resultMap="list">
+        select
+            order_id orderId,
+            order_all_cost orderAllCost,
+            order_state orderStateId,
+            order_goods_num orderAllGoodsCount,
+            version version
+        from t_info_order
+        where is_deleted = 0
+        and create_user = #{createBy}
+        <if test="orderStateId != null and orderStateId != ''">
+            and order_state like concat('%', #{orderStateId}, '%')
+        </if>
+        order by create_time desc
+    </select>
+    <select id="selectList" parameterType="java.lang.String" resultType="com.xzsd.app.clientOrder.entity.GoodsList">
+        select
+            a.goods_id goodsId,
+            a.goods_count cartGoodsCount,
+            b.goods_name goodsName,
+            b.goods_image_path goodsImagePath,
+            b.goods_describe goodsDescribe,
+            b.goods_price goodsPrice
+        from t_info_order_deepen a
+        left join t_info_goods b
+        on a.goods_id = b.goods_id
+        where a.is_deleted = 0
+        and a.order_id = #{orderId}
+        order by a.create_time desc
+    </select>
+
+    <!--删除订单详情中的商品-->
+    <update id="deleteOrderGoods" parameterType="com.xzsd.app.clientOrder.entity.ClientOrderInfo">
+        update t_info_order_deepen
+        <set>
+            is_deleted  = 1,
+            update_time = now(),
+            update_user = #{lastModifiedBy},
+            version     = version + 1
+        </set>
+        where order_id = #{orderId}
+    </update>
+
+    <!--修改订单状态-->
+    <update id="updateOrderState" parameterType="com.xzsd.app.clientOrder.entity.ClientOrderInfo">
+        update t_info_order
+        <set>
+            order_state = #{orderStateId},
+            update_time = now(),
+            update_user = #{lastModifiedBy},
+            version     = version + 1
+        </set>
+        where order_id = #{orderId}
+        and version = #{version}
+    </update>
+
+    <!--评价完成后修改订单状态为5-->
+    <update id="updateOrderStateTo5" parameterType="com.xzsd.app.clientOrder.entity.ClientOrderInfo">
+        update t_info_order
+        <set>
+            order_state = 5,
+            update_time = now(),
+            update_user = #{lastModifiedBy},
+            version     = version + 1
+        </set>
+        where order_id = #{orderId}
+    </update>
+
+    <!--更新销售量和平均评价等级-->
+    <update id="setGoodsSalesAndEvaluate" parameterType="java.util.List">
+        <foreach item="item" index="index" collection="listSet" open="" separator=";" close=";">
+            update t_info_goods
+            set
+                goods_sales = #{item.goodsSales},
+                goods_sales_num = (
+                    select SUM(goods_count)
+                    from t_info_order_deepen
+                    where goods_id = #{item.goodsId}
+                    and is_deleted = 0
+                    GROUP BY goods_id
+                    ),
+                goods_evaluate_score = #{item.goodsEvaluateScore}
+            where goods_id = #{item.goodsId}
+        </foreach>
+    </update>
+
+    <!--更新商品库存-->
+    <update id="setGoodsInventory" parameterType="java.util.List">
+        <foreach item="item" index="index" collection="listSet" open="" separator=";" close=";">
+            update t_info_goods
+            set
+                goods_inventory = goods_inventory - (
+                    select SUM(goods_count)
+                    from t_info_order_deepen
+                    where goods_id = #{item.goodsId}
+                    and is_deleted = 0
+                    GROUP BY goods_id
+                    )
+            where goods_id = #{item.goodsId}
+        </foreach>
+    </update>
+
+    <!--获取商品当前平均评价等级和销售量-->
+    <select id="getGoodsEvaluateScoreAndSales" parameterType="java.lang.String" resultType="com.xzsd.app.clientOrder.entity.GoodsEvaluateScoreAndSales">
+        select
+            b.goods_evaluate_score goodsEvaluateScore,
+            b.goods_id goodsId,
+            b.goods_sales goodsSales
+        from
+            t_info_order_deepen a
+            inner join t_info_goods b
+            on a.goods_id = b.goods_id
+        and a.is_deleted = 0
+        and a.order_id = #{orderId}
+    </select>
+
+    <!--查询订单详情信息-->
+    <select id="listOrderDeepen" parameterType="java.lang.String" resultType="com.xzsd.app.clientOrder.entity.ClientOrderOutput">
+        select
+            a.order_id orderId,
+            b.store_name storeName,
+            b.address address,
+            a.order_all_cost orderAllCost,
+            a.order_goods_num orderAllGoodsCount,
+            a.order_state orderStateId,
+            a.create_time crateTime
+        from
+            t_info_order a
+            left join t_info_store b
+            on a.store_id = b.store_id
+        where a.order_id = #{orderId}
+        and a.is_deleted = 0
+    </select>
+
+    <!--查询订单商品列表信息-->
+    <select id="listGoods" parameterType="java.lang.String" resultType="com.xzsd.app.clientOrder.entity.GoodsList">
+        select
+            a.goods_id goodsId,
+            a.goods_count cartGoodsCount,
+            b.goods_name goodsName,
+            b.goods_image_path goodsImagePath,
+            b.goods_describe goodsDescribe,
+            b.goods_price goodsPrice
+        from t_info_order_deepen a
+        left join t_info_goods b
+        on a.goods_id = b.goods_id
+        where a.is_deleted = 0
+        and a.order_id = #{orderId}
+        order by a.create_time desc
+    </select>
+
+    <!--新增商品评价-->
+    <insert id="addGoodsEvaluate" parameterType="java.util.List">
+        insert into t_info_goods_evaluate
+            (
+            evaluate_id,
+            order_id,
+            goods_id,
+            evaluate_content,
+            evaluate_score,
+            is_deleted,
+            create_time,
+            create_user,
+            update_time,
+            update_user,
+            version
+            )
+        values
+        <foreach collection="listEvaluateAdd" item="item" index="index" separator=",">
+            (
+            #{item.evaluateId},
+            #{item.orderId},
+            #{item.goodsId},
+            #{item.evaluateContent},
+            #{item.evaluateScore},
+            0,
+            now(),
+            #{item.createBy},
+            now(),
+            #{item.lastModifiedBy},
+            0
+            )
+        </foreach>
+    </insert>
+
+    <!--查询订单评价商品信息列表信息-->
+    <select id="listGoodsForEvaluate" parameterType="java.lang.String" resultType="com.xzsd.app.clientOrder.entity.GoodsList">
+        select
+            b.goods_id goodsId,
+            b.goods_image_path goodsImagePath
+        from t_info_order_deepen a
+        left join t_info_goods b
+        on a.goods_id = b.goods_id
+        where a.is_deleted = 0
+        and a.order_id = #{orderId}
+        order by a.create_time desc
+    </select>
+</mapper>

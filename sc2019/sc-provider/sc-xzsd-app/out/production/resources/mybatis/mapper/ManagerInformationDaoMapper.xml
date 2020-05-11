@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.app.managerInformation.dao.ManagerInformationDao">
+    <!--分页查询司机列表-->
+    <select id="listManagerDrivers" parameterType="java.lang.String" resultType="com.xzsd.app.managerInformation.entity.ManagerInformationInfo">
+        select
+            user_name userName,
+            phone phone
+        from t_sys_user
+        where is_deleted = 0
+        and area_code in (
+            select area_id
+            from t_info_store
+            where user_id = #{userCode})
+        order by gmt_create desc
+    </select>
+</mapper>
